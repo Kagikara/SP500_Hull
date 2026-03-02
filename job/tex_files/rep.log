@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.9)  23 DEC 2025 09:51
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.8.9)  2 MAR 2026 19:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -863,10 +863,10 @@ Package fontspec Info:
 \pydata@fh@0=\write6
 \openout6 = `_75A384057459AE8E69FB9A98A249B4F4.data.minted'.
 
-runsystem(latexminted config  --timestamp 20251223095128 75A384057459AE8E69FB9A98A249B4F4)...executed safely (allowed).
+runsystem(latexminted config  --timestamp 20260302192040 75A384057459AE8E69FB9A98A249B4F4)...executed safely (allowed).
 
  (./_75A384057459AE8E69FB9A98A249B4F4.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20251223095128 75A384057459AE8E69FB9A98A249B4F4)...executed safely (allowed).
+runsystem(latexminted cleanconfig  --timestamp 20260302192040 75A384057459AE8E69FB9A98A249B4F4)...executed safely (allowed).
 
  (./_minted/default.style.minted) (./_minted/A06D64EA09B1B2B29F140BD55C10BD78.highlight.minted
 
@@ -1170,7 +1170,7 @@ Package rerunfilecheck Info: File `rep.out' has not changed.
 Here is how much of TeX's memory you used:
  23578 strings out of 468442
  554150 string characters out of 5449249
- 1070839 words of memory out of 5000000
+ 1070795 words of memory out of 5000000
  51583 multiletter control sequences out of 15000+600000
  637175 words of font info for 132 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
