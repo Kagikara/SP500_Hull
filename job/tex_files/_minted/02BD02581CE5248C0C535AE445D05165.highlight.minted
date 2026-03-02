@@ -1,0 +1,104 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 模块 1: Logistic 数据处理}
+\PYG{c+c1}{\PYGZsh{} 文件路径: logistic/01\PYGZus{}data\PYGZus{}processor\PYGZus{}logistic.R}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{tidyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{zoo}\PYG{p}{)}
+
+\PYG{n}{process\PYGZus{}data\PYGZus{}logistic}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{file\PYGZus{}path}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{config}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}Logit] 读取数据:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{file\PYGZus{}path}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n+nf}{file.exists}\PYG{p}{(}\PYG{n}{file\PYGZus{}path}\PYG{p}{))}\PYG{+w}{ }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}找不到文件\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{raw\PYGZus{}data}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{read.csv}\PYG{p}{(}\PYG{n}{file\PYGZus{}path}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stringsAsFactors}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}date\PYGZus{}id\PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZpc{}in\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{raw\PYGZus{}data}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{data\PYGZus{}period}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{raw\PYGZus{}data}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{filter}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{l+m}{1006}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{data\PYGZus{}period}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{raw\PYGZus{}data}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{p}{(}\PYG{l+m}{1}\PYG{o}{:}\PYG{l+m}{1006}\PYG{p}{),}\PYG{+w}{ }\PYG{p}{]}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}col\PYGZus{}names}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{raw\PYGZus{}data}\PYG{p}{)[}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{p\PYGZus{}cols}\PYG{p}{]}
+\PYG{+w}{  }\PYG{n}{v\PYGZus{}col\PYGZus{}names}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{raw\PYGZus{}data}\PYG{p}{)[}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{v\PYGZus{}cols}\PYG{p}{]}
+\PYG{+w}{  }\PYG{n}{target\PYGZus{}col}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns\PYGZdq{}}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 构造基础数据集 (包含 date\PYGZus{}id, target, 和所有 P/V 原始列)}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 注意：这里我们保留原始列，为了后面做 Imputation}
+\PYG{+w}{  }\PYG{n}{df\PYGZus{}raw}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data\PYGZus{}period}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}
+\PYG{+w}{    }\PYG{n+nf}{select}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{all\PYGZus{}of}\PYG{p}{(}\PYG{n}{target\PYGZus{}col}\PYG{p}{),}\PYG{+w}{ }\PYG{n+nf}{all\PYGZus{}of}\PYG{p}{(}\PYG{n}{p\PYGZus{}col\PYGZus{}names}\PYG{p}{),}\PYG{+w}{ }\PYG{n+nf}{all\PYGZus{}of}\PYG{p}{(}\PYG{n}{v\PYGZus{}col\PYGZus{}names}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 构造 Target (0/1)}
+\PYG{+w}{  }\PYG{n}{df\PYGZus{}raw}\PYG{o}{\PYGZdl{}}\PYG{n}{y}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{ifelse}\PYG{p}{(}\PYG{n}{df\PYGZus{}raw}\PYG{p}{[[}\PYG{n}{target\PYGZus{}col}\PYG{p}{]]}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 先切分数据集，再做特征工程}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}Logit] 执行时序切分 (Train End:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{train\PYGZus{}end\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{})...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}raw}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{df\PYGZus{}raw}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{filter}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{train\PYGZus{}end\PYGZus{}id}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}raw}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{df\PYGZus{}raw}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{filter}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{train\PYGZus{}end\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{date\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{test\PYGZus{}end\PYGZus{}id}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{train\PYGZus{}raw}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}训练集为空\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{}  缺失值填补}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}Logit] 执行缺失值填补...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{impute\PYGZus{}cols}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{n}{p\PYGZus{}col\PYGZus{}names}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{v\PYGZus{}col\PYGZus{}names}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{impute\PYGZus{}vals}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{sapply}\PYG{p}{(}\PYG{n}{train\PYGZus{}raw}\PYG{p}{[}\PYG{n}{impute\PYGZus{}cols}\PYG{p}{],}\PYG{+w}{ }\PYG{n}{median}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{TRUE}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{apply\PYGZus{}impute}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{df}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{vals}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kr}{for}\PYG{p}{(}\PYG{n}{col}\PYG{+w}{ }\PYG{k+kr}{in}\PYG{+w}{ }\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{vals}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{df}\PYG{p}{[[}\PYG{n}{col}\PYG{p}{]][}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{df}\PYG{p}{[[}\PYG{n}{col}\PYG{p}{]])]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{vals}\PYG{p}{[}\PYG{n}{col}\PYG{p}{]}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n}{df}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}imputed}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{apply\PYGZus{}impute}\PYG{p}{(}\PYG{n}{train\PYGZus{}raw}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{impute\PYGZus{}vals}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}imputed}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{apply\PYGZus{}impute}\PYG{p}{(}\PYG{n}{test\PYGZus{}raw}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{impute\PYGZus{}vals}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 特征合成}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}Logit] 计算合成因子 P\PYGZus{}star \PYGZam{} V\PYGZus{}star...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{calc\PYGZus{}factors}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{df}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{df}\PYG{o}{\PYGZdl{}}\PYG{n}{P\PYGZus{}star}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rowMeans}\PYG{p}{(}\PYG{n}{df}\PYG{p}{[}\PYG{n}{p\PYGZus{}col\PYGZus{}names}\PYG{p}{])}
+\PYG{+w}{    }\PYG{n}{df}\PYG{o}{\PYGZdl{}}\PYG{n}{V\PYGZus{}star}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rowMeans}\PYG{p}{(}\PYG{n}{df}\PYG{p}{[}\PYG{n}{v\PYGZus{}col\PYGZus{}names}\PYG{p}{])}
+\PYG{+w}{    }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n}{df}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{select}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{P\PYGZus{}star}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{V\PYGZus{}star}\PYG{p}{))}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}factors}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{calc\PYGZus{}factors}\PYG{p}{(}\PYG{n}{train\PYGZus{}imputed}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}factors}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{calc\PYGZus{}factors}\PYG{p}{(}\PYG{n}{test\PYGZus{}imputed}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 标准化 (Z\PYGZhy{}Score)}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}Logit] 执行标准化\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{stats}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{p\PYGZus{}mean}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{mean}\PYG{p}{(}\PYG{n}{train\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{P\PYGZus{}star}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{p\PYGZus{}sd}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{sd}\PYG{p}{(}\PYG{n}{train\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{P\PYGZus{}star}\PYG{p}{),}
+\PYG{+w}{    }\PYG{n}{v\PYGZus{}mean}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{mean}\PYG{p}{(}\PYG{n}{train\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{V\PYGZus{}star}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{v\PYGZus{}sd}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{sd}\PYG{p}{(}\PYG{n}{train\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{V\PYGZus{}star}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{standardize}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{mu}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sigma}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{x}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{mu}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{sigma}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{P\PYGZus{}std}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{standardize}\PYG{p}{(}\PYG{n}{train\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{P\PYGZus{}star}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stats}\PYG{o}{\PYGZdl{}}\PYG{n}{p\PYGZus{}mean}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stats}\PYG{o}{\PYGZdl{}}\PYG{n}{p\PYGZus{}sd}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{V\PYGZus{}std}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{standardize}\PYG{p}{(}\PYG{n}{train\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{V\PYGZus{}star}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stats}\PYG{o}{\PYGZdl{}}\PYG{n}{v\PYGZus{}mean}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stats}\PYG{o}{\PYGZdl{}}\PYG{n}{v\PYGZus{}sd}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{P\PYGZus{}std}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{standardize}\PYG{p}{(}\PYG{n}{test\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{P\PYGZus{}star}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stats}\PYG{o}{\PYGZdl{}}\PYG{n}{p\PYGZus{}mean}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stats}\PYG{o}{\PYGZdl{}}\PYG{n}{p\PYGZus{}sd}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{V\PYGZus{}std}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{standardize}\PYG{p}{(}\PYG{n}{test\PYGZus{}factors}\PYG{o}{\PYGZdl{}}\PYG{n}{V\PYGZus{}star}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stats}\PYG{o}{\PYGZdl{}}\PYG{n}{v\PYGZus{}mean}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stats}\PYG{o}{\PYGZdl{}}\PYG{n}{v\PYGZus{}sd}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 清理最终包含 NA 的行 (如标准化产生 NaN 或 Target 缺失)}
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}final}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{na.omit}\PYG{p}{(}\PYG{n}{train\PYGZus{}factors}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}final}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{na.omit}\PYG{p}{(}\PYG{n}{test\PYGZus{}factors}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}Logit] 处理完成. Train:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{train\PYGZus{}final}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}| Test:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{test\PYGZus{}final}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{train}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{train\PYGZus{}final}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{test}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{test\PYGZus{}final}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{raw\PYGZus{}test\PYGZus{}set}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{test\PYGZus{}raw}\PYG{p}{,}\PYG{+w}{ }\PYG{c+c1}{\PYGZsh{} 保留原始测试集以便后续获取收益率}
+\PYG{+w}{    }\PYG{n}{stats}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{stats}
+\PYG{+w}{  }\PYG{p}{))}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

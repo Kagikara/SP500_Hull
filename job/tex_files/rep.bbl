@@ -1,0 +1,22 @@
+\begin{thebibliography}{1}
+
+\bibitem{fama1993common}
+Eugene~F Fama and Kenneth~R French.
+\newblock Common risk factors in the returns on stocks and bonds.
+\newblock {\em Journal of financial economics}, 33(1):3--56, 1993.
+
+\bibitem{hastie2009elements}
+T.~Hastie, R.~Tibshirani, and J.H. Friedman.
+\newblock {\em The Elements of Statistical Learning: Data Mining, Inference, and Prediction}.
+\newblock Springer series in statistics. Springer, 2009.
+
+\bibitem{ledoit2008robust}
+Oliver Ledoit and Michael Wolf.
+\newblock Robust performance hypothesis testing with the sharpe ratio.
+\newblock {\em Journal of Empirical Finance}, 15(5):850--859, 2008.
+
+\bibitem{周志华2016机器学习}
+周志华.
+\newblock {\em 机器学习}.
+
+\end{thebibliography}

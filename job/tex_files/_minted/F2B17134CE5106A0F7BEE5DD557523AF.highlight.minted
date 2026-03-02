@@ -1,0 +1,44 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }初始特征\PYG{o}{:}\PYG{l+m}{82}\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{Lasso保留}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{17}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }保留特征\PYG{o}{:}\PYG{+w}{ }\PYG{n}{D1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{D4}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{D6}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{D7}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E11}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E12}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E13}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E17}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{I1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{M17}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{M4}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{P11}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{P12}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{P6}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{S2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{S6}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{V6}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=4 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }平均持仓\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.82}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{Cost}\PYG{p}{]}\PYG{+w}{ }总交易成本损耗\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{19.98}\PYG{o}{\PYGZpc{}}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} XGB 回测绩效报告 (费后) \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{o}{               Metric  Market Strategy}
+\PYG{o}{Ann\PYGZus{}Return Ann\PYGZus{}Return  0.0910   0.0519}
+\PYG{o}{Sharpe         Sharpe  0.5210   0.5577}
+\PYG{o}{Max\PYGZus{}DD         Max\PYGZus{}DD \PYGZhy{}0.2502  \PYGZhy{}0.1049}
+\PYG{o}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=3 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{o}{  \PYGZhy{} 平均持仓: 0.81}
+\PYG{o}{  \PYGZhy{} [Cost] 总交易成本损耗: 18.11\PYGZpc{}}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{XGB}\PYG{+w}{ }回测绩效报告\PYG{+w}{ }\PYG{p}{(}费后\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{               }\PYG{n}{Metric}\PYG{+w}{  }\PYG{n}{Market}\PYG{+w}{ }\PYG{n}{Strategy}
+\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{ }\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{  }\PYG{l+m}{0.0910}\PYG{+w}{   }\PYG{l+m}{0.0547}
+\PYG{n}{Sharpe}\PYG{+w}{         }\PYG{n}{Sharpe}\PYG{+w}{  }\PYG{l+m}{0.5210}\PYG{+w}{   }\PYG{l+m}{0.5935}
+\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{         }\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}0.2502}\PYG{+w}{  }\PYG{l+m}{\PYGZhy{}0.0994}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=2 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }平均持仓\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.8}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{Cost}\PYG{p}{]}\PYG{+w}{ }总交易成本损耗\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{16.86}\PYG{o}{\PYGZpc{}}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} XGB 回测绩效报告 (费后) \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{o}{               Metric  Market Strategy}
+\PYG{o}{Ann\PYGZus{}Return Ann\PYGZus{}Return  0.0910   0.0641}
+\PYG{o}{Sharpe         Sharpe  0.5210   0.6997}
+\PYG{o}{Max\PYGZus{}DD         Max\PYGZus{}DD \PYGZhy{}0.2502  \PYGZhy{}0.0945}
+\PYG{o}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=1 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{o}{  \PYGZhy{} 平均持仓: 0.79}
+\PYG{o}{  \PYGZhy{} [Cost] 总交易成本损耗: 14.51\PYGZpc{}}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{XGB}\PYG{+w}{ }回测绩效报告\PYG{+w}{ }\PYG{p}{(}费后\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{               }\PYG{n}{Metric}\PYG{+w}{  }\PYG{n}{Market}\PYG{+w}{ }\PYG{n}{Strategy}
+\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{ }\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{  }\PYG{l+m}{0.0910}\PYG{+w}{   }\PYG{l+m}{0.0768}
+\PYG{n}{Sharpe}\PYG{+w}{         }\PYG{n}{Sharpe}\PYG{+w}{  }\PYG{l+m}{0.5210}\PYG{+w}{   }\PYG{l+m}{0.8710}
+\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{         }\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}0.2502}\PYG{+w}{  }\PYG{l+m}{\PYGZhy{}0.0878}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=10 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }平均持仓\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.89}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{Cost}\PYG{p}{]}\PYG{+w}{ }总交易成本损耗\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{30.04}\PYGZpc{}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{XGB}\PYG{+w}{ }回测绩效报告\PYG{+w}{ }\PYG{p}{(}费后\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{               }\PYG{n}{Metric}\PYG{+w}{  }\PYG{n}{Market}\PYG{+w}{ }\PYG{n}{Strategy}
+\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{ }\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{  }\PYG{l+m}{0.0910}\PYG{+w}{   }\PYG{l+m}{0.0198}
+\PYG{n}{Sharpe}\PYG{+w}{         }\PYG{n}{Sharpe}\PYG{+w}{  }\PYG{l+m}{0.5210}\PYG{+w}{   }\PYG{l+m}{0.1838}
+\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{         }\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}0.2502}\PYG{+w}{  }\PYG{l+m}{\PYGZhy{}0.1204}
+\end{MintedVerbatim}

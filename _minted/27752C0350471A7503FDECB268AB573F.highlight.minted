@@ -1,0 +1,11 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} R 语言示例}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{ggplot2}\PYG{p}{)}
+
+\PYG{n+nf}{data}\PYG{p}{(}\PYG{n}{mpg}\PYG{p}{)}
+\PYG{n+nf}{ggplot}\PYG{p}{(}\PYG{n}{mpg}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{x}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{displ}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{hwy}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{colour}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{class}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{  }\PYG{n+nf}{geom\PYGZus{}point}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{  }\PYG{n+nf}{labs}\PYG{p}{(}\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}汽车排量与高速公路里程关系\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{       }\PYG{n}{x}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}发动机排量 (L)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{       }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}高速公路里程 (MPG)\PYGZdq{}}\PYG{p}{)}
+\end{MintedVerbatim}

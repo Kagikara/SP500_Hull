@@ -1,0 +1,28 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{+w}{    }\PYG{n}{Top}\PYG{+w}{ }\PYG{l+m}{10}\PYG{+w}{ }高频特征\PYG{o}{:}
+\PYG{+w}{   }\PYG{n}{Feature}\PYG{+w}{ }\PYG{n}{Frequency}
+\PYG{l+m}{1}\PYG{+w}{       }\PYG{n}{P3}\PYG{+w}{      }\PYG{l+m}{1830}
+\PYG{l+m}{2}\PYG{+w}{       }\PYG{n}{M4}\PYG{+w}{      }\PYG{l+m}{1787}
+\PYG{l+m}{3}\PYG{+w}{       }\PYG{n}{P4}\PYG{+w}{      }\PYG{l+m}{1704}
+\PYG{l+m}{4}\PYG{+w}{      }\PYG{n}{E19}\PYG{+w}{      }\PYG{l+m}{1699}
+\PYG{l+m}{5}\PYG{+w}{       }\PYG{n}{P7}\PYG{+w}{      }\PYG{l+m}{1619}
+\PYG{l+m}{6}\PYG{+w}{      }\PYG{n}{P12}\PYG{+w}{      }\PYG{l+m}{1593}
+\PYG{l+m}{7}\PYG{+w}{       }\PYG{n}{V3}\PYG{+w}{      }\PYG{l+m}{1573}
+\PYG{l+m}{8}\PYG{+w}{       }\PYG{n}{S2}\PYG{+w}{      }\PYG{l+m}{1552}
+\PYG{l+m}{9}\PYG{+w}{      }\PYG{n}{P13}\PYG{+w}{      }\PYG{l+m}{1529}
+\PYG{l+m}{10}\PYG{+w}{      }\PYG{n}{M3}\PYG{+w}{      }\PYG{l+m}{1477}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{o}{\PYGZhy{}}\PYG{+w}{ }平均持仓\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.75}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{RF}\PYG{+w}{ }回测绩效报告\PYG{p}{(}费前\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{               }\PYG{n}{Metric}\PYG{+w}{  }\PYG{n}{Market}\PYG{+w}{ }\PYG{n}{Strategy}
+\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{ }\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{  }\PYG{l+m}{0.0910}\PYG{+w}{   }\PYG{l+m}{0.0394}
+\PYG{n}{Sharpe}\PYG{+w}{         }\PYG{n}{Sharpe}\PYG{+w}{  }\PYG{l+m}{0.5210}\PYG{+w}{   }\PYG{l+m}{0.3552}
+\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{         }\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}0.2502}\PYG{+w}{  }\PYG{l+m}{\PYGZhy{}0.2043}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{RF}\PYG{+w}{ }回测绩效报告\PYG{p}{(}费后\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }平均持仓\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.76}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{Cost}\PYG{p}{]}\PYG{+w}{ }总交易成本\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{9.70}\PYGZpc{}
+\PYG{+w}{               }\PYG{n}{Metric}\PYG{+w}{  }\PYG{n}{Market}\PYG{+w}{ }\PYG{n}{Strategy}
+\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{ }\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{  }\PYG{l+m}{0.0910}\PYG{+w}{   }\PYG{l+m}{0.0139}
+\PYG{n}{Sharpe}\PYG{+w}{         }\PYG{n}{Sharpe}\PYG{+w}{  }\PYG{l+m}{0.5210}\PYG{+w}{   }\PYG{l+m}{0.1254}
+\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{         }\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}0.2502}\PYG{+w}{  }\PYG{l+m}{\PYGZhy{}0.2370}
+\end{MintedVerbatim}

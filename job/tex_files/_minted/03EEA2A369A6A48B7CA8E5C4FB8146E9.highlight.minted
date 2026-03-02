@@ -1,0 +1,98 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{+w}{ }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 主程序: SVM}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{n+nf}{setwd}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}C:\PYGZbs{}\PYGZbs{}Users\PYGZbs{}\PYGZbs{}kagirasu\PYGZbs{}\PYGZbs{}works\PYGZus{}H\PYGZbs{}\PYGZbs{}ml\PYGZus{}HULL\PYGZbs{}\PYGZbs{}job\PYGZbs{}\PYGZbs{}code\PYGZbs{}\PYGZbs{}code\PYGZus{}section3\PYGZbs{}\PYGZbs{}proj\PYGZus{}svm\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{rm}\PYG{p}{(}\PYG{n}{list}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{ls}\PYG{p}{())}
+\PYG{n+nf}{gc}\PYG{p}{()}
+
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{ggplot2}\PYG{p}{)}
+
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}svm\PYGZus{}modulized\PYGZus{}handmade/algorithm\PYGZus{}handmade.R\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}svm\PYGZus{}modulized\PYGZus{}handmade/01\PYGZus{}data\PYGZus{}processor.R\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}svm\PYGZus{}modulized\PYGZus{}handmade/02\PYGZus{}model\PYGZus{}trainer.R\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}svm\PYGZus{}modulized\PYGZus{}handmade/03\PYGZus{}new.R\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n}{CONFIG}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} 文件路径配置 \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{  }\PYG{n}{input\PYGZus{}file}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}data/train.csv\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{output\PYGZus{}dir}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}output\PYGZdq{}}\PYG{p}{,}
+
+\PYG{+w}{  }\PYG{n}{model\PYGZus{}type}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}svm\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{kernel\PYGZus{}type}\PYG{+w}{    }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}rbf\PYGZdq{}}\PYG{p}{,}
+
+\PYG{+w}{  }\PYG{n}{missing\PYGZus{}thresh}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.20}\PYG{p}{,}\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 缺失率剔除阈值 (20\PYGZpc{})}
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}end\PYGZus{}id}\PYG{+w}{   }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{7000}\PYG{p}{,}\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 训练集截止 ID}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}start\PYGZus{}id}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{7001}\PYG{p}{,}\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 测试集开始 ID}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}end\PYGZus{}id}\PYG{+w}{    }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{7984}\PYG{p}{,}\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 测试集截止 ID}
+
+\PYG{+w}{  }\PYG{n}{cv\PYGZus{}folds}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{,}\PYG{+w}{       }\PYG{c+c1}{\PYGZsh{} 交叉验证折数}
+
+\PYG{+w}{  }\PYG{n}{tune\PYGZus{}grid}\PYG{+w}{      }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} C = c(0.0001, 0.001, 0.01, 0.1, 1.0, 10.0),}
+\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} C = c(0.1, 1.0, 10.0, 100.0, 1000.0),}
+\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} C = c(10, 100, 1000, 10000, 50000),}
+\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} C = c(0.1:1, 0.2),}
+\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} C = seq(from = 0.01, to = 0.2, by = 0.01),}
+\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} gamma = seq(from = 0.001, to = 0.015, by = 0.003) \PYGZsh{} RBF 模式下才会用到}
+\PYG{+w}{     }\PYG{n}{C}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1e\PYGZhy{}1}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{gamma}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1e\PYGZhy{}2}
+\PYG{+w}{  }\PYG{p}{),}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} [调试模式] 固定参数}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 如果不想每次都跑网格搜索，取消下面这行的注释，就能直接使用最佳参数}
+
+\PYG{+w}{  }\PYG{n}{fixed\PYGZus{}params}\PYG{+w}{   }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{NULL}\PYG{p}{,}
+
+\PYG{+w}{  }\PYG{n}{target\PYGZus{}vol}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.20}\PYG{p}{,}\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 目标波动率}
+\PYG{+w}{  }\PYG{n}{max\PYGZus{}leverage}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{,}\PYG{+w}{       }\PYG{c+c1}{\PYGZsh{} 最大杠杆上限}
+\PYG{+w}{  }\PYG{n}{trend\PYGZus{}window}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{60}\PYG{p}{,}\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} 趋势均线窗口 (MA60)}
+\PYG{+w}{  }\PYG{n}{prob\PYGZus{}roll\PYGZus{}window}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{60}\PYG{p}{,}\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} 自适应中枢的回顾窗口 (60天)}
+\PYG{+w}{  }\PYG{n}{prob\PYGZus{}slope}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{10}\PYG{p}{,}\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} 信号敏感度}
+\PYG{+w}{  }\PYG{n}{transaction\PYGZus{}cost}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.001}
+\PYG{p}{)}
+
+\PYG{k+kr}{if}\PYG{p}{(}\PYG{o}{!}\PYG{n+nf}{dir.exists}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{))}\PYG{+w}{ }\PYG{n+nf}{dir.create}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{)}
+
+
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 3. 程序流}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+
+\PYG{n}{start\PYGZus{}time}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{Sys.time}\PYG{p}{()}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZgt{}\PYGZgt{}\PYGZgt{} 任务启动时间:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{format}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZpc{}Y\PYGZhy{}\PYGZpc{}m\PYGZhy{}\PYGZpc{}d \PYGZpc{}H:\PYGZpc{}M:\PYGZpc{}S\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{40}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZgt{}\PYGZgt{}\PYGZgt{} 阶段1: 数据预处理\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{40}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sep}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{tryCatch}\PYG{p}{(\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{data\PYGZus{}bundle}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{process\PYGZus{}data}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{input\PYGZus{}file}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{p}{)}
+\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{error}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{e}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}数据处理阶段出错: \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{e}\PYG{o}{\PYGZdl{}}\PYG{n}{message}\PYG{p}{)}
+\PYG{p}{\PYGZcb{})}
+
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{40}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZgt{}\PYGZgt{}\PYGZgt{} 阶段2: 模型训练\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{40}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sep}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{tryCatch}\PYG{p}{(\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{model\PYGZus{}bundle}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{train\PYGZus{}model\PYGZus{}entry}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{p}{)}
+\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{error}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{e}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}模型训练阶段出错: \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{e}\PYG{o}{\PYGZdl{}}\PYG{n}{message}\PYG{p}{)}
+\PYG{p}{\PYGZcb{})}
+
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{40}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZgt{}\PYGZgt{}\PYGZgt{} 阶段3: 策略回测\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{40}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sep}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{tryCatch}\PYG{p}{(\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{backtest\PYGZus{}results}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{run\PYGZus{}strategy\PYGZus{}backtest}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{model\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{p}{)}
+\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{error}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{e}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}策略回测阶段出错: \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{e}\PYG{o}{\PYGZdl{}}\PYG{n}{message}\PYG{p}{)}
+\PYG{p}{\PYGZcb{})}
+
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 4. 结束摘要}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{n}{end\PYGZus{}time}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{Sys.time}\PYG{p}{()}
+\PYG{n}{duration}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{round}\PYG{p}{(}\PYG{n+nf}{difftime}\PYG{p}{(}\PYG{n}{end\PYGZus{}time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{start\PYGZus{}time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{units}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}mins\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{)}
+
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{40}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZgt{}\PYGZgt{}\PYGZgt{} 所有任务执行完毕！\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{40}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sep}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 总耗时:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{duration}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}分钟\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 输出目录:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 最终夏普比率:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{round}\PYG{p}{(}\PYG{n}{backtest\PYGZus{}results}\PYG{o}{\PYGZdl{}}\PYG{n}{metrics}\PYG{o}{\PYGZdl{}}\PYG{n}{Strategy}\PYG{p}{[}\PYG{l+m}{2}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m}{4}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 结果图表: backtest\PYGZus{}equity\PYGZus{}curve.png\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\end{MintedVerbatim}

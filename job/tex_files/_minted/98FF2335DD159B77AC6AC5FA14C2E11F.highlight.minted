@@ -1,0 +1,52 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{+w}{    }解释能力最强因子\PYG{+w}{ }\PYG{n}{Top}\PYG{+w}{ }\PYG{l+m}{10}\PYG{+w}{ }\PYG{p}{(}按\PYG{+w}{ }\PYG{n}{Gain}\PYG{+w}{ }排序\PYG{p}{)}\PYG{o}{:}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{    }\PYG{n}{Feature}\PYG{+w}{       }\PYG{n}{Gain}\PYG{+w}{      }\PYG{n}{Cover}\PYG{+w}{  }\PYG{n}{Frequency}
+\PYG{+w}{     }\PYG{o}{\PYGZlt{}}\PYG{n}{char}\PYG{o}{\PYGZgt{}}\PYG{+w}{      }\PYG{o}{\PYGZlt{}}\PYG{n}{num}\PYG{o}{\PYGZgt{}}\PYG{+w}{      }\PYG{o}{\PYGZlt{}}\PYG{n}{num}\PYG{o}{\PYGZgt{}}\PYG{+w}{      }\PYG{o}{\PYGZlt{}}\PYG{n}{num}\PYG{o}{\PYGZgt{}}
+\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{:}\PYG{+w}{      }\PYG{n}{M4}\PYG{+w}{ }\PYG{l+m}{0.06906219}\PYG{+w}{ }\PYG{l+m}{0.12912819}\PYG{+w}{ }\PYG{l+m}{0.05437616}
+\PYG{+w}{ }\PYG{l+m}{2}\PYG{o}{:}\PYG{+w}{      }\PYG{n}{S2}\PYG{+w}{ }\PYG{l+m}{0.02896701}\PYG{+w}{ }\PYG{l+m}{0.04468142}\PYG{+w}{ }\PYG{l+m}{0.03016760}
+\PYG{+w}{ }\PYG{l+m}{3}\PYG{o}{:}\PYG{+w}{      }\PYG{n}{P7}\PYG{+w}{ }\PYG{l+m}{0.02811796}\PYG{+w}{ }\PYG{l+m}{0.02088469}\PYG{+w}{ }\PYG{l+m}{0.02867784}
+\PYG{+w}{ }\PYG{l+m}{4}\PYG{o}{:}\PYG{+w}{      }\PYG{n}{M3}\PYG{+w}{ }\PYG{l+m}{0.02740396}\PYG{+w}{ }\PYG{l+m}{0.02253089}\PYG{+w}{ }\PYG{l+m}{0.02532588}
+\PYG{+w}{ }\PYG{l+m}{5}\PYG{o}{:}\PYG{+w}{     }\PYG{n}{E19}\PYG{+w}{ }\PYG{l+m}{0.02697840}\PYG{+w}{ }\PYG{l+m}{0.02779179}\PYG{+w}{ }\PYG{l+m}{0.02607076}
+\PYG{+w}{ }\PYG{l+m}{6}\PYG{o}{:}\PYG{+w}{      }\PYG{n}{P3}\PYG{+w}{ }\PYG{l+m}{0.02627806}\PYG{+w}{ }\PYG{l+m}{0.01771408}\PYG{+w}{ }\PYG{l+m}{0.02681564}
+\PYG{+w}{ }\PYG{l+m}{7}\PYG{o}{:}\PYG{+w}{      }\PYG{n}{S5}\PYG{+w}{ }\PYG{l+m}{0.02368019}\PYG{+w}{ }\PYG{l+m}{0.02929413}\PYG{+w}{ }\PYG{l+m}{0.02458101}
+\PYG{+w}{ }\PYG{l+m}{8}\PYG{o}{:}\PYG{+w}{      }\PYG{n}{P6}\PYG{+w}{ }\PYG{l+m}{0.02284912}\PYG{+w}{ }\PYG{l+m}{0.01473327}\PYG{+w}{ }\PYG{l+m}{0.02346369}
+\PYG{+w}{ }\PYG{l+m}{9}\PYG{o}{:}\PYG{+w}{      }\PYG{n}{P5}\PYG{+w}{ }\PYG{l+m}{0.02156341}\PYG{+w}{ }\PYG{l+m}{0.01569604}\PYG{+w}{ }\PYG{l+m}{0.02234637}
+\PYG{l+m}{10}\PYG{o}{:}\PYG{+w}{      }\PYG{n}{P4}\PYG{+w}{ }\PYG{l+m}{0.01987095}\PYG{+w}{ }\PYG{l+m}{0.01497071}\PYG{+w}{ }\PYG{l+m}{0.02234637}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=4 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }平均持仓\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.77}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{Cost}\PYG{p}{]}\PYG{+w}{ }总交易成本损耗\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{5.70}\PYG{o}{\PYGZpc{}}
+\PYG{o}{               Metric  Market Strategy}
+\PYG{o}{Ann\PYGZus{}Return Ann\PYGZus{}Return  0.0910   0.1188}
+\PYG{o}{Sharpe         Sharpe  0.5210   1.3608}
+\PYG{o}{Max\PYGZus{}DD         Max\PYGZus{}DD \PYGZhy{}0.2502  \PYGZhy{}0.0913}
+\PYG{o}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=3 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{o}{  \PYGZhy{} 平均持仓: 0.77}
+\PYG{o}{  \PYGZhy{} [Cost] 总交易成本损耗: 4.80\PYGZpc{}}
+\PYG{+w}{               }\PYG{n}{Metric}\PYG{+w}{  }\PYG{n}{Market}\PYG{+w}{ }\PYG{n}{Strategy}
+\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{ }\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{  }\PYG{l+m}{0.0910}\PYG{+w}{   }\PYG{l+m}{0.1162}
+\PYG{n}{Sharpe}\PYG{+w}{         }\PYG{n}{Sharpe}\PYG{+w}{  }\PYG{l+m}{0.5210}\PYG{+w}{   }\PYG{l+m}{1.3284}
+\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{         }\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}0.2502}\PYG{+w}{  }\PYG{l+m}{\PYGZhy{}0.0933}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=2 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }平均持仓\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.75}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{Cost}\PYG{p}{]}\PYG{+w}{ }总交易成本损耗\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{5.60}\PYG{o}{\PYGZpc{}}
+\PYG{o}{               Metric  Market Strategy}
+\PYG{o}{Ann\PYGZus{}Return Ann\PYGZus{}Return  0.0910   0.1147}
+\PYG{o}{Sharpe         Sharpe  0.5210   1.3577}
+\PYG{o}{Max\PYGZus{}DD         Max\PYGZus{}DD \PYGZhy{}0.2502  \PYGZhy{}0.0891}
+\PYG{o}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=1 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{o}{  \PYGZhy{} 平均持仓: 0.76}
+\PYG{o}{  \PYGZhy{} [Cost] 总交易成本损耗: 5.93\PYGZpc{}}
+\PYG{+w}{               }\PYG{n}{Metric}\PYG{+w}{  }\PYG{n}{Market}\PYG{+w}{ }\PYG{n}{Strategy}
+\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{ }\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{  }\PYG{l+m}{0.0910}\PYG{+w}{   }\PYG{l+m}{0.1114}
+\PYG{n}{Sharpe}\PYG{+w}{         }\PYG{n}{Sharpe}\PYG{+w}{  }\PYG{l+m}{0.5210}\PYG{+w}{   }\PYG{l+m}{1.3109}
+\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{         }\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}0.2502}\PYG{+w}{  }\PYG{l+m}{\PYGZhy{}0.0893}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} k=10 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }平均持仓\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.81}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{Cost}\PYG{p}{]}\PYG{+w}{ }总交易成本损耗\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{14.03}\PYGZpc{}
+\PYG{+w}{               }\PYG{n}{Metric}\PYG{+w}{  }\PYG{n}{Market}\PYG{+w}{ }\PYG{n}{Strategy}
+\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{ }\PYG{n}{Ann\PYGZus{}Return}\PYG{+w}{  }\PYG{l+m}{0.0910}\PYG{+w}{   }\PYG{l+m}{0.0991}
+\PYG{n}{Sharpe}\PYG{+w}{         }\PYG{n}{Sharpe}\PYG{+w}{  }\PYG{l+m}{0.5210}\PYG{+w}{   }\PYG{l+m}{1.1167}
+\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{         }\PYG{n}{Max\PYGZus{}DD}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}0.2502}\PYG{+w}{  }\PYG{l+m}{\PYGZhy{}0.0847}
+\end{MintedVerbatim}

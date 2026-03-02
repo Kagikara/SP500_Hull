@@ -1,0 +1,74 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 模块 1: RF数据处理器}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{tidyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{zoo}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{}\PYGZsq{} @param file\PYGZus{}path 原始csv文件路径}
+\PYG{c+c1}{\PYGZsh{}\PYGZsq{} @param config 全局配置列表}
+\PYG{c+c1}{\PYGZsh{}\PYGZsq{} @return list 包含处理好的训练集、测试集}
+\PYG{n}{process\PYGZus{}data\PYGZus{}rf}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{file\PYGZus{}path}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{config}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}RF] 正在读取数据:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{file\PYGZus{}path}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n+nf}{file.exists}\PYG{p}{(}\PYG{n}{file\PYGZus{}path}\PYG{p}{))}\PYG{+w}{ }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}错误: 找不到数据文件 \PYGZhy{}\PYGZgt{} \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{file\PYGZus{}path}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{raw\PYGZus{}data}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{read.csv}\PYG{p}{(}\PYG{n}{file\PYGZus{}path}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stringsAsFactors}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{target\PYGZus{}col\PYGZus{}raw}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns\PYGZdq{}}
+\PYG{+w}{  }\PYG{n}{id\PYGZus{}cols}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}date\PYGZus{}id\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}forward\PYGZus{}returns\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}risk\PYGZus{}free\PYGZus{}rate\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{potential\PYGZus{}features}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{setdiff}\PYG{p}{(}\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{raw\PYGZus{}data}\PYG{p}{),}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{n}{target\PYGZus{}col\PYGZus{}raw}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{id\PYGZus{}cols}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{data\PYGZus{}period}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{raw\PYGZus{}data}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}
+\PYG{+w}{    }\PYG{n+nf}{filter}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{l+m}{1006}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}
+\PYG{+w}{    }\PYG{n+nf}{arrange}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}RF] 正在基于训练集 (date\PYGZus{}id \PYGZlt{}=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{train\PYGZus{}end\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}) 计算缺失率...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}subset\PYGZus{}for\PYGZus{}stats}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data\PYGZus{}period}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}
+\PYG{+w}{    }\PYG{n+nf}{filter}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{train\PYGZus{}end\PYGZus{}id}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{train\PYGZus{}subset\PYGZus{}for\PYGZus{}stats}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}错误: 训练集为空，请检查 train\PYGZus{}end\PYGZus{}id 配置\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{missing\PYGZus{}ratio}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{colMeans}\PYG{p}{(}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{train\PYGZus{}subset\PYGZus{}for\PYGZus{}stats}\PYG{p}{[}\PYG{n}{potential\PYGZus{}features}\PYG{p}{]))}
+\PYG{+w}{  }\PYG{n}{cols\PYGZus{}to\PYGZus{}drop}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{missing\PYGZus{}ratio}\PYG{p}{[}\PYG{n}{missing\PYGZus{}ratio}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{missing\PYGZus{}thresh}\PYG{p}{])}
+\PYG{+w}{  }\PYG{n}{final\PYGZus{}feature\PYGZus{}cols}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{setdiff}\PYG{p}{(}\PYG{n}{potential\PYGZus{}features}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{cols\PYGZus{}to\PYGZus{}drop}\PYG{p}{)}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}RF] 特征筛选:\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 剔除高缺失特征:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{cols\PYGZus{}to\PYGZus{}drop}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 最终保留特征:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{final\PYGZus{}feature\PYGZus{}cols}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{data\PYGZus{}selected}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data\PYGZus{}period}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}
+\PYG{+w}{    }\PYG{n+nf}{select}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{all\PYGZus{}of}\PYG{p}{(}\PYG{n}{target\PYGZus{}col\PYGZus{}raw}\PYG{p}{),}\PYG{+w}{ }\PYG{n+nf}{all\PYGZus{}of}\PYG{p}{(}\PYG{n}{final\PYGZus{}feature\PYGZus{}cols}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{data\PYGZus{}filled}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{na.locf}\PYG{p}{(}\PYG{n}{data\PYGZus{}selected}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{data\PYGZus{}filled}\PYG{p}{[}\PYG{n}{final\PYGZus{}feature\PYGZus{}cols}\PYG{p}{][}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{data\PYGZus{}filled}\PYG{p}{[}\PYG{n}{final\PYGZus{}feature\PYGZus{}cols}\PYG{p}{])]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0}
+\PYG{+w}{  }\PYG{n}{complete\PYGZus{}data}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data\PYGZus{}filled}\PYG{p}{[}\PYG{o}{!}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{data\PYGZus{}filled}\PYG{p}{[[}\PYG{n}{target\PYGZus{}col\PYGZus{}raw}\PYG{p}{]]),}\PYG{+w}{ }\PYG{p}{]}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Data\PYGZhy{}RF] 缺失值处理完成。\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{complete\PYGZus{}data}\PYG{o}{\PYGZdl{}}\PYG{n}{y\PYGZus{}target}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{factor}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n+nf}{ifelse}\PYG{p}{(}\PYG{n}{complete\PYGZus{}data}\PYG{p}{[[}\PYG{n}{target\PYGZus{}col\PYGZus{}raw}\PYG{p}{]]}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{),}
+\PYG{+w}{    }\PYG{n}{levels}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}set}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{complete\PYGZus{}data}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{filter}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{train\PYGZus{}end\PYGZus{}id}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{complete\PYGZus{}data}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{filter}\PYG{p}{(}\PYG{n}{date\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{test\PYGZus{}start\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{date\PYGZus{}id}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{test\PYGZus{}end\PYGZus{}id}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{X\PYGZus{}train}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{train\PYGZus{}set}\PYG{p}{[}\PYG{n}{final\PYGZus{}feature\PYGZus{}cols}\PYG{p}{]}
+\PYG{+w}{  }\PYG{n}{X\PYGZus{}test}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{p}{[}\PYG{n}{final\PYGZus{}feature\PYGZus{}cols}\PYG{p}{]}
+
+\PYG{+w}{  }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{X\PYGZus{}train}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{X\PYGZus{}train}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{y\PYGZus{}train}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{train\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{y\PYGZus{}target}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{X\PYGZus{}test}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{X\PYGZus{}test}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{y\PYGZus{}test}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{y\PYGZus{}target}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{raw\PYGZus{}train\PYGZus{}set}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{train\PYGZus{}set}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{raw\PYGZus{}test\PYGZus{}set}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{feature\PYGZus{}cols}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{final\PYGZus{}feature\PYGZus{}cols}
+\PYG{+w}{  }\PYG{p}{))}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

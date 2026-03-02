@@ -1,0 +1,119 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 文件: main\PYGZus{}controller.R}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{n+nf}{rm}\PYG{p}{(}\PYG{n}{list}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{ls}\PYG{p}{())}
+\PYG{n+nf}{gc}\PYG{p}{()}
+\PYG{n+nf}{setwd}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}C:/Users/kagirasu/works\PYGZus{}H/ml\PYGZus{}HULL/job/code\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{zoo}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{ggplot2}\PYG{p}{)}
+
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}code\PYGZus{}section3/proj\PYGZus{}svm/svm\PYGZus{}modulized\PYGZus{}handmade/algorithm\PYGZus{}handmade.r\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}code\PYGZus{}section4/RF\PYGZus{}NEW/01\PYGZus{}data\PYGZus{}processor\PYGZus{}rf.R\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}code\PYGZus{}section4/RF\PYGZus{}NEW/03\PYGZus{}strategy\PYGZus{}engine\PYGZus{}rf.R\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n}{MODEL\PYGZus{}TYPE}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}rf\PYGZdq{}}
+\PYG{n}{train\PYGZus{}func}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kc}{NULL}
+
+\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{MODEL\PYGZus{}TYPE}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}rf\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}code\PYGZus{}section4/RF\PYGZus{}NEW/02\PYGZus{}model\PYGZus{}trainer\PYGZus{}rf\PYGZus{}handmade.R\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}func}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{train\PYGZus{}rf\PYGZus{}model}
+
+\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{MODEL\PYGZus{}TYPE}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}xgboost\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}code\PYGZus{}section4/RF\PYGZus{}NEW/02\PYGZus{}model\PYGZus{}trainer\PYGZus{}xgb.R\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}func}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{train\PYGZus{}xgb\PYGZus{}model}
+
+\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{MODEL\PYGZus{}TYPE}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}lr\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}code\PYGZus{}section4/RF\PYGZus{}NEW/02\PYGZus{}model\PYGZus{}trainer\PYGZus{}lr.R\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}func}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{train\PYGZus{}lr\PYGZus{}model}
+\PYG{p}{\PYGZcb{}}
+\PYG{n}{CONFIG}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{  }\PYG{n}{input\PYGZus{}file}\PYG{+w}{      }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}code\PYGZus{}section3/proj\PYGZus{}svm/data/train.csv\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{output\PYGZus{}dir}\PYG{+w}{      }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{paste0}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}output\PYGZus{}\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{MODEL\PYGZus{}TYPE}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZus{}sniper\PYGZdq{}}\PYG{p}{),}
+\PYG{+w}{  }\PYG{n}{seed}\PYG{+w}{            }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{42}\PYG{p}{,}
+
+\PYG{+w}{  }\PYG{n}{scale\PYGZus{}features}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{TRUE}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{missing\PYGZus{}thresh}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.20}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}end\PYGZus{}id}\PYG{+w}{    }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{7000}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}start\PYGZus{}id}\PYG{+w}{   }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{7001}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}end\PYGZus{}id}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{7984}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{na\PYGZus{}handling}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}zero\PYGZdq{}}\PYG{p}{,}
+
+\PYG{+w}{  }\PYG{n}{rf\PYGZus{}params}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{ntree}\PYG{+w}{      }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1000}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{mtry}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}sqrt\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{nodesize}\PYG{+w}{   }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{10}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{max\PYGZus{}depth}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{5}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{importance}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{TRUE}
+\PYG{+w}{  }\PYG{p}{),}
+
+\PYG{+w}{  }\PYG{n}{xgb\PYGZus{}params}\PYG{+w}{      }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{nrounds}\PYG{+w}{          }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1000}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{eta}\PYG{+w}{              }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.01}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{max\PYGZus{}depth}\PYG{+w}{        }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{4}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{subsample}\PYG{+w}{        }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.7}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{colsample\PYGZus{}bytree}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.7}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{min\PYGZus{}child\PYGZus{}weight}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{5}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{gamma}\PYG{+w}{            }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.1}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{early\PYGZus{}stopping}\PYG{+w}{   }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{50}
+\PYG{+w}{  }\PYG{p}{),}
+
+\PYG{+w}{  }\PYG{n}{lr\PYGZus{}params}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{alpha}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{  }\PYG{p}{),}
+
+\PYG{n}{sniper\PYGZus{}mode}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{  }\PYG{n}{active}\PYG{+w}{          }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{TRUE}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{lookback\PYGZus{}window}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{250}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{open\PYGZus{}quantile}\PYG{+w}{   }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.98}\PYG{p}{,}\PYG{+w}{   }\PYG{c+c1}{\PYGZsh{} 维持高标准，只在最强时加杠杆}
+
+\PYG{+w}{  }\PYG{n}{hard\PYGZus{}floor\PYGZus{}open}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.53}\PYG{p}{,}\PYG{+w}{   }\PYG{c+c1}{\PYGZsh{} 狙击触发线}
+\PYG{+w}{  }\PYG{n}{hard\PYGZus{}floor\PYGZus{}close}\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.50}\PYG{p}{,}\PYG{+w}{   }\PYG{c+c1}{\PYGZsh{} 趋势多空分界线}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 指数增强仓位管理}
+\PYG{+w}{  }\PYG{n}{pos\PYGZus{}base}\PYG{+w}{        }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.3}\PYG{p}{,}\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 底仓: 平时拿 30\PYGZpc{}}
+\PYG{+w}{  }\PYG{n}{pos\PYGZus{}boost}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{,}\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 增强: 狙击信号触发时，上2倍杠杆}
+\PYG{+w}{  }\PYG{n}{pos\PYGZus{}bailout}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.0}\PYG{p}{,}\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 逃生: 极度看空(如 prob \PYGZlt{} 0.45)时清仓，可选}
+\PYG{+w}{  }\PYG{n}{bailout\PYGZus{}thresh}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.5}\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 逃生阈值}
+\PYG{p}{),}
+
+\PYG{+w}{  }\PYG{n}{target\PYGZus{}vol}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.2}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{max\PYGZus{}leverage}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{2.0}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{transaction\PYGZus{}cost}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.001}
+\PYG{p}{)}
+
+\PYG{n+nf}{set.seed}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{seed}\PYG{p}{)}
+\PYG{k+kr}{if}\PYG{p}{(}\PYG{o}{!}\PYG{n+nf}{dir.exists}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{))}\PYG{+w}{ }\PYG{n+nf}{dir.create}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{)}
+
+\PYG{n}{start\PYGZus{}time}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{Sys.time}\PYG{p}{()}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZgt{}\PYGZgt{}\PYGZgt{} [\PYGZpc{}s Sniper] 启动...\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{toupper}\PYG{p}{(}\PYG{n}{MODEL\PYGZus{}TYPE}\PYG{p}{)))}
+
+\PYG{n}{data\PYGZus{}bundle}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{process\PYGZus{}data\PYGZus{}rf}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{input\PYGZus{}file}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{p}{)}
+
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Main] 调用训练函数...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{model\PYGZus{}bundle}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{train\PYGZus{}func}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{p}{)}
+
+\PYG{n}{backtest\PYGZus{}results}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{run\PYGZus{}strategy\PYGZus{}backtest\PYGZus{}rf}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{model\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{p}{)}
+
+\PYG{n}{end\PYGZus{}time}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{Sys.time}\PYG{p}{()}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZgt{}\PYGZgt{}\PYGZgt{} 完成! 耗时:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{round}\PYG{p}{(}\PYG{n+nf}{difftime}\PYG{p}{(}\PYG{n}{end\PYGZus{}time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{start\PYGZus{}time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{units}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}mins\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}分\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+
+\PYG{n}{check\PYGZus{}df}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{data.frame}\PYG{p}{(}
+\PYG{+w}{  }\PYG{n}{prob}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{backtest\PYGZus{}results}\PYG{o}{\PYGZdl{}}\PYG{n}{results\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{pred\PYGZus{}prob}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{ret}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{backtest\PYGZus{}results}\PYG{o}{\PYGZdl{}}\PYG{n}{results\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}
+\PYG{p}{)}
+
+\PYG{n}{ic}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{cor}\PYG{p}{(}\PYG{n}{check\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{prob}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{check\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{ret}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{method}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}spearman\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZgt{}\PYGZgt{}\PYGZgt{} Rank IC (预测力): \PYGZpc{}.4f\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ic}\PYG{p}{))}
+
+\PYG{n}{check\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{group}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{cut}\PYG{p}{(}\PYG{n}{check\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{prob}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{breaks}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{labels}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+\PYG{n}{group\PYGZus{}res}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{check\PYGZus{}df}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}
+\PYG{+w}{  }\PYG{n+nf}{group\PYGZus{}by}\PYG{p}{(}\PYG{n}{group}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}
+\PYG{+w}{  }\PYG{n+nf}{summarise}\PYG{p}{(}\PYG{n}{avg\PYGZus{}ret}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{mean}\PYG{p}{(}\PYG{n}{ret}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{o}{=}\PYG{k+kc}{TRUE}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{count}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{n}\PYG{p}{())}
+
+\PYG{n+nf}{print}\PYG{p}{(}\PYG{n}{group\PYGZus{}res}\PYG{p}{)}
+\end{MintedVerbatim}

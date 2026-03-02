@@ -1,0 +1,115 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 模块 3: 策略回测 (添加费率因素)}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{zoo}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{ggplot2}\PYG{p}{)}
+
+\PYG{n}{run\PYGZus{}strategy\PYGZus{}backtest}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{model\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{config}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Strategy] 启动策略回测...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}target\PYGZus{}vol}\PYG{+w}{   }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{target\PYGZus{}vol}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{0.15}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{target\PYGZus{}vol}
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}max\PYGZus{}leverage}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{max\PYGZus{}leverage}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{2.0}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{max\PYGZus{}leverage}
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}trend\PYGZus{}window}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{trend\PYGZus{}window}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{60}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{trend\PYGZus{}window}
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}roll\PYGZus{}window}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{prob\PYGZus{}roll\PYGZus{}window}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{60}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{prob\PYGZus{}roll\PYGZus{}window}
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}prob\PYGZus{}slope}\PYG{+w}{   }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{prob\PYGZus{}slope}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{10}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{prob\PYGZus{}slope}
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}trans\PYGZus{}cost}\PYG{+w}{   }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{transaction\PYGZus{}cost}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{0.001}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{transaction\PYGZus{}cost}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 参数: Vol=\PYGZpc{}.2f Lev=\PYGZpc{}.1f Cost=\PYGZpc{}.4f\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{              }\PYG{n}{p\PYGZus{}target\PYGZus{}vol}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{p\PYGZus{}max\PYGZus{}leverage}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{p\PYGZus{}trans\PYGZus{}cost}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 概率校准}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{raw\PYGZus{}test\PYGZus{}set}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}scores}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n}{model\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{test\PYGZus{}scores}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{test\PYGZus{}scores}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}错误: 无预测得分\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{model\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{platt\PYGZus{}params}\PYG{p}{))}\PYG{+w}{ }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}错误: 缺少 Platt 参数\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{platt\PYGZus{}params}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{model\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{platt\PYGZus{}params}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{algo\PYGZus{}platt\PYGZus{}predict}\PYG{p}{(}\PYG{n}{test\PYGZus{}scores}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{platt\PYGZus{}params}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{pred\PYGZus{}prob}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}probs}
+
+\PYG{+w}{  }\PYG{n}{vol\PYGZus{}zoo}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rollapply}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}\PYG{p}{,}
+\PYG{+w}{                       }\PYG{n}{width}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{FUN}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sd}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{fill}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{NA}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{align}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}right\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n+nf}{sqrt}\PYG{p}{(}\PYG{l+m}{252}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{current\PYGZus{}vol}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n}{vol\PYGZus{}zoo}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{current\PYGZus{}vol}\PYG{p}{[}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{current\PYGZus{}vol}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{|}\PYG{+w}{ }\PYG{n}{current\PYGZus{}vol}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{p\PYGZus{}target\PYGZus{}vol}
+
+\PYG{+w}{  }\PYG{n}{price\PYGZus{}index}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{cumprod}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{ma\PYGZus{}trend}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rollapply}\PYG{p}{(}\PYG{n}{price\PYGZus{}index}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{width}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p\PYGZus{}trend\PYGZus{}window}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{FUN}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mean}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{fill}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{NA}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{align}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}right\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{ma\PYGZus{}trend}\PYG{p}{[}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{ma\PYGZus{}trend}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{price\PYGZus{}index}\PYG{p}{[}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{ma\PYGZus{}trend}\PYG{p}{)]}
+\PYG{+w}{  }\PYG{n}{is\PYGZus{}bull}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{ifelse}\PYG{p}{(}\PYG{n}{price\PYGZus{}index}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{ma\PYGZus{}trend}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 仓位计算}
+\PYG{+w}{  }\PYG{n}{rolling\PYGZus{}median}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rollapply}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{pred\PYGZus{}prob}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{width}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p\PYGZus{}roll\PYGZus{}window}\PYG{p}{,}
+\PYG{+w}{                              }\PYG{n}{FUN}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{median}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{fill}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{NA}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{align}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}right\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{adaptive\PYGZus{}center}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{dplyr}\PYG{o}{::}\PYG{n+nf}{lag}\PYG{p}{(}\PYG{n}{rolling\PYGZus{}median}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{default\PYGZus{}center}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{median}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{pred\PYGZus{}prob}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{TRUE}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{adaptive\PYGZus{}center}\PYG{p}{[}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{adaptive\PYGZus{}center}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{default\PYGZus{}center}
+
+\PYG{+w}{  }\PYG{n}{signal\PYGZus{}score}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0.5}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{pred\PYGZus{}prob}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{adaptive\PYGZus{}center}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{p\PYGZus{}prob\PYGZus{}slope}
+\PYG{+w}{  }\PYG{n}{base\PYGZus{}pos}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{pmax}\PYG{p}{(}\PYG{l+m}{0.2}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{pmin}\PYG{p}{(}\PYG{l+m}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{signal\PYGZus{}score}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{vol\PYGZus{}scaler}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{p\PYGZus{}target\PYGZus{}vol}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{current\PYGZus{}vol}
+\PYG{+w}{  }\PYG{n}{trend\PYGZus{}mult}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{ifelse}\PYG{p}{(}\PYG{n}{is\PYGZus{}bull}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1.0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.6}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{raw\PYGZus{}pos}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{base\PYGZus{}pos}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{vol\PYGZus{}scaler}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{trend\PYGZus{}mult}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{pmin}\PYG{p}{(}\PYG{n}{raw\PYGZus{}pos}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{p\PYGZus{}max\PYGZus{}leverage}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{p}{[}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 平均持仓:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{round}\PYG{p}{(}\PYG{n+nf}{mean}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{p}{),}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 4. 绩效统计 (含交易成本)}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n}{pos\PYGZus{}change}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{diff}\PYG{p}{(}\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n}{turnover\PYGZus{}cost}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{abs}\PYG{p}{(}\PYG{n}{pos\PYGZus{}change}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{p\PYGZus{}trans\PYGZus{}cost}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 净收益 = (持仓 * 市场收益) \PYGZhy{} 成本}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{gross\PYGZus{}return}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{strategy\PYGZus{}return}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{gross\PYGZus{}return}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{turnover\PYGZus{}cost}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} [Cost] 总交易成本损耗: \PYGZpc{}.2f\PYGZpc{}\PYGZpc{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{sum}\PYG{p}{(}\PYG{n}{turnover\PYGZus{}cost}\PYG{p}{)}\PYG{o}{*}\PYG{l+m}{100}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{calc\PYGZus{}metrics}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{ret}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{ret}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n}{ret}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{total}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{prod}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ret}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{o}{=}\PYG{k+kc}{TRUE}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{    }\PYG{n}{ann}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{total}\PYG{p}{)}\PYG{o}{\PYGZca{}}\PYG{p}{(}\PYG{l+m}{252}\PYG{o}{/}\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{ret}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{    }\PYG{n}{vol}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{sd}\PYG{p}{(}\PYG{n}{ret}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{o}{=}\PYG{k+kc}{TRUE}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n+nf}{sqrt}\PYG{p}{(}\PYG{l+m}{252}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{sharpe}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n}{vol}\PYG{o}{==}\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{l+m}{0}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{ann}\PYG{o}{/}\PYG{n}{vol}
+\PYG{+w}{    }\PYG{n}{dd}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{min}\PYG{p}{((}\PYG{n+nf}{cumprod}\PYG{p}{(}\PYG{l+m}{1}\PYG{o}{+}\PYG{n}{ret}\PYG{p}{)}\PYG{o}{/}\PYG{n+nf}{cummax}\PYG{p}{(}\PYG{n+nf}{cumprod}\PYG{p}{(}\PYG{l+m}{1}\PYG{o}{+}\PYG{n}{ret}\PYG{p}{)))}\PYG{l+m}{\PYGZhy{}1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{o}{=}\PYG{k+kc}{TRUE}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n+nf}{c}\PYG{p}{(}\PYG{n}{Ann\PYGZus{}Return}\PYG{o}{=}\PYG{n}{ann}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Sharpe}\PYG{o}{=}\PYG{n}{sharpe}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Max\PYGZus{}DD}\PYG{o}{=}\PYG{n}{dd}\PYG{p}{))}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{res\PYGZus{}strat}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{calc\PYGZus{}metrics}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{strategy\PYGZus{}return}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{res\PYGZus{}mkt}\PYG{+w}{   }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{calc\PYGZus{}metrics}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{metrics\PYGZus{}df}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{data.frame}\PYG{p}{(}\PYG{n}{Metric}\PYG{o}{=}\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{res\PYGZus{}strat}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{Market}\PYG{o}{=}\PYG{n+nf}{round}\PYG{p}{(}\PYG{n}{res\PYGZus{}mkt}\PYG{p}{,}\PYG{l+m}{4}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{Strategy}\PYG{o}{=}\PYG{n+nf}{round}\PYG{p}{(}\PYG{n}{res\PYGZus{}strat}\PYG{p}{,}\PYG{l+m}{4}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} 回测绩效报告 (费后) \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n+nf}{print}\PYG{p}{(}\PYG{n}{metrics\PYGZus{}df}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n+nf}{write.csv}\PYG{p}{(}\PYG{n}{metrics\PYGZus{}df}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{file.path}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}performance\PYGZus{}metrics.csv\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{row.names}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{plot\PYGZus{}df}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{data.frame}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{Time}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{:}\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{p}{),}
+\PYG{+w}{    }\PYG{n}{Market}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{cumprod}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}\PYG{p}{),}
+\PYG{+w}{    }\PYG{n}{Strategy}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{cumprod}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{strategy\PYGZus{}return}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{)}
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}date\PYGZus{}id\PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZpc{}in\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{p}{))}\PYG{+w}{ }\PYG{n}{plot\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{Time}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{date\PYGZus{}id}
+
+\PYG{+w}{  }\PYG{n}{p}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{ggplot}\PYG{p}{(}\PYG{n}{plot\PYGZus{}df}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{x}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Time}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{geom\PYGZus{}line}\PYG{p}{(}\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Market}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Market\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{alpha}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.6}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{geom\PYGZus{}line}\PYG{p}{(}\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Strategy}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}SVM Strategy (Net)\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{scale\PYGZus{}color\PYGZus{}manual}\PYG{p}{(}\PYG{n}{values}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Market\PYGZdq{}}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}grey\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}SVM Strategy (Net)\PYGZdq{}}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}red\PYGZdq{}}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{labs}\PYG{p}{(}\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}SVM Strategy Performance (Net of Cost)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{         }\PYG{n}{subtitle}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{paste}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Sharpe:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{round}\PYG{p}{(}\PYG{n}{res\PYGZus{}strat}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}Sharpe\PYGZsq{}}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{),}
+\PYG{+w}{                          }\PYG{l+s}{\PYGZdq{}| Cost:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{p\PYGZus{}trans\PYGZus{}cost}\PYG{o}{*}\PYG{l+m}{10000}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}bps\PYGZdq{}}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{theme\PYGZus{}minimal}\PYG{p}{()}
+
+\PYG{+w}{  }\PYG{n+nf}{ggsave}\PYG{p}{(}\PYG{n+nf}{file.path}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}equity\PYGZus{}curve.png\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{width}\PYG{o}{=}\PYG{l+m}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{height}\PYG{o}{=}\PYG{l+m}{5}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n+nf}{list}\PYG{p}{(}\PYG{n}{results\PYGZus{}df}\PYG{o}{=}\PYG{n}{test\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{metrics}\PYG{o}{=}\PYG{n}{metrics\PYGZus{}df}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{plot}\PYG{o}{=}\PYG{n}{p}\PYG{p}{))}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

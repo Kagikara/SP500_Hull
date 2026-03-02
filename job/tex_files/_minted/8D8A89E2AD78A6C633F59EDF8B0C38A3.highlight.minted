@@ -1,0 +1,143 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 模块 2: XGBoost 训练器}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+
+
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}C:/Users/kagirasu/works\PYGZus{}H/ml\PYGZus{}HULL/job/code/code\PYGZus{}section3/XGB/manual\PYGZus{}xgboost.R\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}XGB/lasso.r\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n}{train\PYGZus{}xgb\PYGZus{}model}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{config}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Model\PYGZhy{}ManualXGB] 准备数据矩阵...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{X\PYGZus{}full}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.matrix}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{X\PYGZus{}train}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{y\PYGZus{}full}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n+nf}{as.character}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{y\PYGZus{}train}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n}{X\PYGZus{}test}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.matrix}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{X\PYGZus{}test}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} Lasso 特征选择}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{set.seed}\PYG{p}{(}\PYG{l+m}{42}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{!}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{use\PYGZus{}lasso}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{use\PYGZus{}lasso}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{k+kc}{TRUE}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Model\PYGZhy{}ManualXGB] 启动 Lasso 特征选择...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{n}{lasso\PYGZus{}res}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{algo\PYGZus{}lasso\PYGZus{}cv}\PYG{p}{(}
+\PYG{+w}{      }\PYG{n}{X\PYGZus{}raw}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{X\PYGZus{}full}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{y\PYGZus{}raw}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{y\PYGZus{}full}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{k\PYGZus{}folds}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{lasso\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{k\PYGZus{}folds}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{n\PYGZus{}lambdas}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{lasso\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{n\PYGZus{}lambdas}
+\PYG{+w}{    }\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{n}{kept\PYGZus{}features}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{lasso\PYGZus{}res}\PYG{o}{\PYGZdl{}}\PYG{n}{selected\PYGZus{}features}
+\PYG{+w}{    }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} Lasso 筛选: \PYGZpc{}d \PYGZhy{}\PYGZgt{} \PYGZpc{}d 个特征\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{ncol}\PYG{p}{(}\PYG{n}{X\PYGZus{}full}\PYG{p}{),}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{kept\PYGZus{}features}\PYG{p}{)))}
+
+\PYG{+w}{    }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{kept\PYGZus{}features}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n+nf}{warning}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Lasso 选出特征过少，回退到全量特征。\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{X\PYGZus{}full}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{X\PYGZus{}full}\PYG{p}{[,}\PYG{+w}{ }\PYG{n}{kept\PYGZus{}features}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{drop}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{]}
+\PYG{+w}{      }\PYG{n}{X\PYGZus{}test}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{X\PYGZus{}test}\PYG{p}{[,}\PYG{+w}{ }\PYG{n}{kept\PYGZus{}features}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{drop}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{]}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{final\PYGZus{}features}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{colnames}\PYG{p}{(}\PYG{n}{X\PYGZus{}full}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{params}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{eta}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{xgb\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{eta}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{max\PYGZus{}depth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{xgb\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{max\PYGZus{}depth}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{lambda\PYGZus{}reg}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1.0}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{gamma}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.0}
+\PYG{+w}{  }\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 2. 获取 Platt 校准参数}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Model\PYGZhy{}ManualXGB] 执行手动 5\PYGZhy{}Fold CV 以获取 OOF 预测...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{n\PYGZus{}folds}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{5}
+\PYG{+w}{  }\PYG{n}{folds}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{sample}\PYG{p}{(}\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{n\PYGZus{}folds}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{length.out}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{X\PYGZus{}full}\PYG{p}{)))}
+\PYG{+w}{  }\PYG{n}{oof\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{numeric}\PYG{p}{(}\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{X\PYGZus{}full}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n}{best\PYGZus{}iters}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{numeric}\PYG{p}{(}\PYG{n}{n\PYGZus{}folds}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{k}\PYG{+w}{ }\PYG{k+kr}{in}\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{n\PYGZus{}folds}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{val\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{which}\PYG{p}{(}\PYG{n}{folds}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{k}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{X\PYGZus{}tr\PYGZus{}cv}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{X\PYGZus{}full}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{n}{val\PYGZus{}idx}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{drop}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{]}
+\PYG{+w}{    }\PYG{n}{y\PYGZus{}tr\PYGZus{}cv}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{y\PYGZus{}full}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{n}{val\PYGZus{}idx}\PYG{p}{]}
+\PYG{+w}{    }\PYG{n}{X\PYGZus{}val\PYGZus{}cv}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{X\PYGZus{}full}\PYG{p}{[}\PYG{n}{val\PYGZus{}idx}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{drop}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{]}
+\PYG{+w}{    }\PYG{n}{y\PYGZus{}val\PYGZus{}cv}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{y\PYGZus{}full}\PYG{p}{[}\PYG{n}{val\PYGZus{}idx}\PYG{p}{]}
+
+\PYG{+w}{    }\PYG{n}{n\PYGZus{}rounds\PYGZus{}cv}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{xgb\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{nrounds}
+
+\PYG{+w}{    }\PYG{n}{cv\PYGZus{}model}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{xgb\PYGZus{}train\PYGZus{}manual}\PYG{p}{(}
+\PYG{+w}{      }\PYG{n}{X}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{X\PYGZus{}tr\PYGZus{}cv}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{y\PYGZus{}tr\PYGZus{}cv}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{params}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{params}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{nrounds}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{n\PYGZus{}rounds\PYGZus{}cv}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{eval\PYGZus{}set}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}\PYG{n}{data}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{X\PYGZus{}val\PYGZus{}cv}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{y\PYGZus{}val\PYGZus{}cv}\PYG{p}{),}
+\PYG{+w}{      }\PYG{n}{verbose}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}
+\PYG{+w}{    }\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{n}{val\PYGZus{}losses}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{cv\PYGZus{}model}\PYG{o}{\PYGZdl{}}\PYG{n}{history}\PYG{o}{\PYGZdl{}}\PYG{n}{val\PYGZus{}loss}
+\PYG{+w}{    }\PYG{n}{best\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{which.min}\PYG{p}{(}\PYG{n}{val\PYGZus{}losses}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{best\PYGZus{}iters}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{best\PYGZus{}t}
+
+\PYG{+w}{    }\PYG{n}{cv\PYGZus{}model\PYGZus{}best}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{cv\PYGZus{}model}
+\PYG{+w}{    }\PYG{n}{cv\PYGZus{}model\PYGZus{}best}\PYG{o}{\PYGZdl{}}\PYG{n}{trees}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{cv\PYGZus{}model}\PYG{o}{\PYGZdl{}}\PYG{n}{trees}\PYG{p}{[}\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{best\PYGZus{}t}\PYG{p}{]}
+
+\PYG{+w}{    }\PYG{n}{oof\PYGZus{}probs}\PYG{p}{[}\PYG{n}{val\PYGZus{}idx}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{xgb\PYGZus{}predict\PYGZus{}manual}\PYG{p}{(}\PYG{n}{cv\PYGZus{}model\PYGZus{}best}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{X\PYGZus{}val\PYGZus{}cv}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}    Fold \PYGZpc{}d: Best Iter = \PYGZpc{}d, Min Loss = \PYGZpc{}.4f\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{best\PYGZus{}t}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{min}\PYG{p}{(}\PYG{n}{val\PYGZus{}losses}\PYG{p}{)))}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{avg\PYGZus{}best\PYGZus{}iter}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{floor}\PYG{p}{(}\PYG{n+nf}{mean}\PYG{p}{(}\PYG{n}{best\PYGZus{}iters}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} CV 平均最佳轮数: \PYGZpc{}d\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{avg\PYGZus{}best\PYGZus{}iter}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} Platt Fit}
+\PYG{+w}{  }\PYG{n}{eps}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1e\PYGZhy{}6}
+\PYG{+w}{  }\PYG{n}{oof\PYGZus{}probs\PYGZus{}clipped}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{pmax}\PYG{p}{(}\PYG{n}{eps}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{pmin}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{eps}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{oof\PYGZus{}probs}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n}{oof\PYGZus{}scores}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{log}\PYG{p}{(}\PYG{n}{oof\PYGZus{}probs\PYGZus{}clipped}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{oof\PYGZus{}probs\PYGZus{}clipped}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{real\PYGZus{}platt\PYGZus{}params}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{algo\PYGZus{}platt\PYGZus{}fit}\PYG{p}{(}\PYG{n}{oof\PYGZus{}scores}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y\PYGZus{}full}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} [校准完成] Platt参数: A=\PYGZpc{}.4f, B=\PYGZpc{}.4f\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{              }\PYG{n}{real\PYGZus{}platt\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{A}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{real\PYGZus{}platt\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{B}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 全量重新训练}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Model\PYGZhy{}ManualXGB] 使用全量数据进行最终训练...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{final\PYGZus{}model}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{xgb\PYGZus{}train\PYGZus{}manual}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{X}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{X\PYGZus{}full}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{y\PYGZus{}full}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{params}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{params}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{nrounds}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{avg\PYGZus{}best\PYGZus{}iter}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{verbose}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}
+\PYG{+w}{  }\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 4. 生成测试集预测}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{xgb\PYGZus{}predict\PYGZus{}manual}\PYG{p}{(}\PYG{n}{final\PYGZus{}model}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{X\PYGZus{}test}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{probs\PYGZus{}clipped}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{pmax}\PYG{p}{(}\PYG{n}{eps}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{pmin}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{eps}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{test\PYGZus{}probs}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}scores\PYGZus{}logit}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{log}\PYG{p}{(}\PYG{n}{probs\PYGZus{}clipped}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{probs\PYGZus{}clipped}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 生成特征重要性 csv}
+\PYG{+w}{  }\PYG{n}{importance\PYGZus{}matrix}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{xgb\PYGZus{}importance\PYGZus{}manual}\PYG{p}{(}\PYG{n}{feature\PYGZus{}names}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{final\PYGZus{}features}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{model}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{final\PYGZus{}model}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n+nf}{write.csv}\PYG{p}{(}\PYG{n}{importance\PYGZus{}matrix}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{file.path}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}xgb\PYGZus{}feature\PYGZus{}importance.csv\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{row.names}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 返回结果}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{model}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{final\PYGZus{}model}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{test\PYGZus{}scores}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{test\PYGZus{}scores\PYGZus{}logit}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{platt\PYGZus{}params}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{real\PYGZus{}platt\PYGZus{}params}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{feature\PYGZus{}importance}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{importance\PYGZus{}matrix}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{model\PYGZus{}type}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}manual\PYGZus{}xgboost\PYGZdq{}}
+\PYG{+w}{  }\PYG{p}{))}
+\PYG{p}{\PYGZcb{}}
+
+\end{MintedVerbatim}

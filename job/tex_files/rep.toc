@@ -1,0 +1,42 @@
+\contentsline {section}{\numberline {1}背景：EMH的质疑声}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}EMH}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}关于数据集}{4}{subsection.1.2}%
+\contentsline {section}{\numberline {2}初步假设检验：寻找支持价值溢价择时策略的证据}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}因子五分位法检验夏普比差异和最大回撤差异}{5}{subsection.2.1}%
+\contentsline {section}{\numberline {3}多因子择时策略下的调仓策略}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Logistic回归模型}{7}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}模型方法}{7}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}结果分析}{7}{subsubsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.2}SVM模型\cite {hastie2009elements}\cite {周志华2016机器学习}}{8}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}模型方法}{8}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}算法步骤}{8}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}代码工作流}{10}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}结果分析}{12}{subsubsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.3}RF模型}{15}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}模型方法}{15}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}算法步骤}{15}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}代码工作流}{16}{subsubsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.4}结果分析}{16}{subsubsection.3.3.4}%
+\contentsline {subsection}{\numberline {3.4}XGBoost模型}{18}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}模型方法}{18}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}算法步骤}{18}{subsubsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.3}代码工作流}{19}{subsubsection.3.4.3}%
+\contentsline {subsubsection}{\numberline {3.4.4}结果分析}{19}{subsubsection.3.4.4}%
+\contentsline {subsubsection}{\numberline {3.4.5}Lasso变量筛选后的XGBoost}{21}{subsubsection.3.4.5}%
+\contentsline {section}{\numberline {4}投资策略（仓位控制函数）的改进}{22}{section.4}%
+\contentsline {section}{\numberline {5}总结}{24}{section.5}%
+\contentsline {section}{\numberline {A}部分模型数学原理}{25}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}SMO算法}{25}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Lasso变量选择}{25}{subsection.A.2}%
+\contentsline {section}{\numberline {B}图片}{28}{appendix.B}%
+\contentsline {section}{\numberline {C}参考文献}{30}{appendix.C}%
+\contentsline {section}{\numberline {D}代码实现}{31}{appendix.D}%
+\contentsline {subsection}{\numberline {D.1}初步假设检验：寻找支持价值溢价择时策略的证据}{31}{subsection.D.1}%
+\contentsline {subsubsection}{\numberline {D.1.1}$\texttt {quant5\_test\_sharpe.r}$}{31}{subsubsection.D.1.1}%
+\contentsline {subsubsection}{\numberline {D.1.2}$\texttt {quant5\_test\_mdd.r}$}{31}{subsubsection.D.1.2}%
+\contentsline {subsection}{\numberline {D.2}多因子择时策略下的调仓策略}{32}{subsection.D.2}%
+\contentsline {subsubsection}{\numberline {D.2.1}Logistic回归模型}{32}{subsubsection.D.2.1}%
+\contentsline {subsubsection}{\numberline {D.2.2}SVM模型}{35}{subsubsection.D.2.2}%
+\contentsline {subsubsection}{\numberline {D.2.3}RF模型}{58}{subsubsection.D.2.3}%
+\contentsline {subsubsection}{\numberline {D.2.4}XGBoost模型}{71}{subsubsection.D.2.4}%
+\contentsline {subsection}{\numberline {D.3}投资策略（仓位控制函数）的改进}{84}{subsection.D.3}%

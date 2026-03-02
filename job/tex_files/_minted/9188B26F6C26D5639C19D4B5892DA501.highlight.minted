@@ -1,0 +1,26 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{PeerPerformance}\PYG{p}{)}\PYG{+w}{ }\PYG{c+c1}{\PYGZsh{} 包含Ledoit\PYGZhy{}Wolf 检验的 sharpeTesting 函数}
+
+\PYG{n}{data\PYGZus{}P}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{read.csv}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}train.csv\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{stringsAsFactors}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+\PYG{n}{colindex}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{58}\PYG{o}{:}\PYG{l+m}{70}\PYG{p}{)}
+\PYG{n}{P\PYGZus{}star}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rowMeans}\PYG{p}{(}\PYG{n}{data\PYGZus{}P}\PYG{p}{[,}\PYG{+w}{ }\PYG{n}{colindex}\PYG{p}{],}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{TRUE}\PYG{p}{)}
+\PYG{n}{P\PYGZus{}star}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{P\PYGZus{}star}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{p}{(}\PYG{l+m}{1}\PYG{o}{:}\PYG{l+m}{1006}\PYG{p}{)]}\PYG{+w}{ }\PYG{c+c1}{\PYGZsh{} 只从第1006条数据开始，因为前面的数据不含有该特征}
+
+\PYG{n}{n\PYGZus{}target}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{floor}\PYG{p}{(}\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{P\PYGZus{}star}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m}{0.20}\PYG{p}{)}\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 目标数量}
+\PYG{n}{sorted\PYGZus{}indices}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{order}\PYG{p}{(}\PYG{n}{P\PYGZus{}star}\PYG{p}{)}\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 排序后的索引}
+\PYG{n}{label}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{k+kc}{FALSE}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{P\PYGZus{}star}\PYG{p}{))}
+\PYG{n}{label}\PYG{p}{[}\PYG{n}{sorted\PYGZus{}indices}\PYG{p}{[}\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{n\PYGZus{}target}\PYG{p}{]]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kc}{TRUE}\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 标记Q1组}
+
+\PYG{n}{R\PYGZus{}Q1}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{ifelse}\PYG{p}{(}\PYG{n}{label}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{P\PYGZus{}star}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}
+\PYG{n}{R\PYGZus{}P}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{P\PYGZus{}star}
+
+\PYG{c+c1}{\PYGZsh{} type = 2 表示使用studentized bootstrap}
+\PYG{c+c1}{\PYGZsh{} bBoot = 0 表示让函数自动选择最佳块长度}
+\PYG{n}{control\PYGZus{}params}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}\PYG{n}{type}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{nBoot}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{4999}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{bBoot}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} 执行检验}
+\PYG{n}{test\PYGZus{}result}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{sharpeTesting}\PYG{p}{(}\PYG{n}{R\PYGZus{}Q1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{R\PYGZus{}P}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{control}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{control\PYGZus{}params}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} 查看 p\PYGZhy{}value}
+\PYG{n}{test\PYGZus{}result}
+\end{MintedVerbatim}

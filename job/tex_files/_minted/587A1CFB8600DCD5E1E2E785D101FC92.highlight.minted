@@ -1,0 +1,14 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{+w}{        }\PYG{n}{Threshold}\PYG{+w}{ }\PYG{n}{Precision}\PYG{+w}{ }\PYG{n}{Signal\PYGZus{}Count}\PYG{+w}{ }\PYG{n}{Coverage}
+\PYG{l+m}{1}\PYG{+w}{      }\PYG{l+m}{0.500}\PYG{+w}{    }\PYG{l+m}{0.5447}\PYG{+w}{          }\PYG{l+m}{962}\PYG{+w}{   }\PYG{l+m}{0.9776}
+\PYG{l+m}{2}\PYG{+w}{      }\PYG{l+m}{0.501}\PYG{+w}{    }\PYG{l+m}{0.5467}\PYG{+w}{          }\PYG{l+m}{953}\PYG{+w}{   }\PYG{l+m}{0.9685}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} omitted \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{l+m}{15}\PYG{+w}{     }\PYG{l+m}{0.514}\PYG{+w}{    }\PYG{l+m}{0.5561}\PYG{+w}{          }\PYG{l+m}{669}\PYG{+w}{   }\PYG{l+m}{0.6799}
+\PYG{l+m}{16}\PYG{+w}{     }\PYG{l+m}{0.515}\PYG{+w}{    }\PYG{l+m}{0.5608}\PYG{+w}{          }\PYG{l+m}{617}\PYG{+w}{   }\PYG{l+m}{0.6270}
+\PYG{l+m}{17}\PYG{+w}{     }\PYG{l+m}{0.516}\PYG{+w}{    }\PYG{l+m}{0.5667}\PYG{+w}{          }\PYG{l+m}{577}\PYG{+w}{   }\PYG{l+m}{0.5864}
+\PYG{l+m}{18}\PYG{+w}{     }\PYG{l+m}{0.517}\PYG{+w}{    }\PYG{l+m}{0.5769}\PYG{+w}{          }\PYG{l+m}{527}\PYG{+w}{   }\PYG{l+m}{0.5356}
+\PYG{l+m}{19}\PYG{+w}{     }\PYG{l+m}{0.518}\PYG{+w}{    }\PYG{l+m}{0.5767}\PYG{+w}{          }\PYG{l+m}{489}\PYG{+w}{   }\PYG{l+m}{0.4970}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} omitted \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{l+m}{50}\PYG{+w}{     }\PYG{l+m}{0.549}\PYG{+w}{    }\PYG{l+m}{0.0000}\PYG{+w}{            }\PYG{l+m}{0}\PYG{+w}{   }\PYG{l+m}{0.0000}
+\PYG{l+m}{51}\PYG{+w}{     }\PYG{l+m}{0.550}\PYG{+w}{    }\PYG{l+m}{0.0000}\PYG{+w}{            }\PYG{l+m}{0}\PYG{+w}{   }\PYG{l+m}{0.0000}
+\end{MintedVerbatim}

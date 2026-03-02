@@ -1,0 +1,17 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{Coefficients}\PYG{o}{:}
+\PYG{+w}{              }\PYG{n}{Estimate}\PYG{+w}{ }\PYG{n}{Std.}\PYG{+w}{ }\PYG{n}{Error}\PYG{+w}{ }\PYG{n}{z}\PYG{+w}{ }\PYG{n}{value}\PYG{+w}{ }\PYG{n+nf}{Pr}\PYG{p}{(}\PYG{o}{\PYGZgt{}|}\PYG{n}{z}\PYG{o}{|}\PYG{p}{)}
+\PYG{p}{(}\PYG{n}{Intercept}\PYG{p}{)}\PYG{+w}{    }\PYG{l+m}{0.20000}\PYG{+w}{    }\PYG{l+m}{0.06359}\PYG{+w}{   }\PYG{l+m}{3.145}\PYG{+w}{  }\PYG{l+m}{0.00166}\PYG{+w}{ }\PYG{o}{**}
+\PYG{n}{P\PYGZus{}star\PYGZus{}signal}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}0.27003}\PYG{+w}{    }\PYG{l+m}{0.10180}\PYG{+w}{  }\PYG{l+m}{\PYGZhy{}2.653}\PYG{+w}{  }\PYG{l+m}{0.00799}\PYG{+w}{ }\PYG{o}{**}
+\PYG{n}{V\PYGZus{}star\PYGZus{}signal}\PYG{+w}{  }\PYG{l+m}{0.06608}\PYG{+w}{    }\PYG{l+m}{0.07337}\PYG{+w}{   }\PYG{l+m}{0.901}\PYG{+w}{  }\PYG{l+m}{0.36778}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{+w}{         }\PYG{n}{Actual}
+\PYG{n}{Predicted}\PYG{+w}{   }\PYG{l+m}{0}\PYG{+w}{   }\PYG{l+m}{1}
+\PYG{+w}{        }\PYG{l+m}{0}\PYG{+w}{ }\PYG{l+m}{344}\PYG{+w}{ }\PYG{l+m}{384}
+\PYG{+w}{        }\PYG{l+m}{1}\PYG{+w}{ }\PYG{l+m}{412}\PYG{+w}{ }\PYG{l+m}{457}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}}\PYG{+w}{ }性能指标\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{n}{Accuracy}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.5016}
+\PYG{n}{Precision}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.5259}
+\PYG{n}{Recall}\PYG{+w}{   }\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.5434}
+\PYG{n}{F1}\PYG{+w}{ }\PYG{n}{Score}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.5345}
+\end{MintedVerbatim}

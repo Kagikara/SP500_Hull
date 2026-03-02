@@ -1,0 +1,44 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} 第一次调优}
+\PYG{+w}{ }\PYG{n}{C\PYGZus{}grid}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0.1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{10}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{100}\PYG{p}{)}
+\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}grid}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0.01}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}
+\PYG{+w}{ }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n+nf}{C }\PYG{p}{(}\PYG{n}{Cost}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.1}
+\PYG{+w}{ }\PYG{n}{gamma}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.01}
+\PYG{+w}{ }\PYG{c+c1}{\PYGZsh{} 第二次调优}
+\PYG{+w}{ }\PYG{n}{C\PYGZus{}grid}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0.01}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.05}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}
+\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}grid}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0.001}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.005}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.01}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.05}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.1}\PYG{p}{)}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n+nf}{C }\PYG{p}{(}\PYG{n}{Cost}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.01}
+\PYG{+w}{ }\PYG{n}{gamma}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.001}
+\PYG{+w}{  }平均\PYG{+w}{ }\PYG{n}{Accuracy}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.4178}\PYG{+w}{ }±\PYG{+w}{ }\PYG{l+m}{0.234}
+\PYG{+w}{  }平均\PYG{+w}{ }\PYG{n}{F1}\PYG{o}{\PYGZhy{}}\PYG{n}{Score}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.5488}\PYG{+w}{ }±\PYG{+w}{ }\PYG{l+m}{0.3071}
+\PYG{+w}{  }平均\PYG{+w}{ }\PYG{n}{Precision}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.4178}
+\PYG{+w}{  }平均\PYG{+w}{ }\PYG{n}{Recall}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.8}
+\PYG{+w}{ }\PYG{c+c1}{\PYGZsh{} 第三次调优}
+\PYG{+w}{ }\PYG{n}{C\PYGZus{}grid}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0.001}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.005}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.01}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.015}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.02}\PYG{p}{)}
+\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}grid}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0.007}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.009}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.01}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.015}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{0.02}\PYG{p}{)}
+\PYG{+w}{  }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n+nf}{C }\PYG{p}{(}\PYG{n}{Cost}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.001}
+\PYG{+w}{ }\PYG{n}{gamma}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.007}
+\PYG{+w}{  }平均\PYG{+w}{ }\PYG{n}{Accuracy}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.4178}\PYG{+w}{ }±\PYG{+w}{ }\PYG{l+m}{0.234}
+\PYG{+w}{  }平均\PYG{+w}{ }\PYG{n}{F1}\PYG{o}{\PYGZhy{}}\PYG{n}{Score}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.5488}\PYG{+w}{ }±\PYG{+w}{ }\PYG{l+m}{0.3071}
+\PYG{+w}{  }平均\PYG{+w}{ }\PYG{n}{Precision}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.4178}
+\PYG{+w}{  }平均\PYG{+w}{ }\PYG{n}{Recall}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.8}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} 模型可能全部预测都退化为上涨 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n+nf}{print}\PYG{p}{(}\PYG{n+nf}{table}\PYG{p}{(}\PYG{n}{y\PYGZus{}train}\PYG{p}{))}
+\PYG{+w}{ }\PYG{n}{y\PYGZus{}train}
+\PYG{+w}{    }\PYG{l+m}{0}\PYG{+w}{    }\PYG{l+m}{1}
+\PYG{+w}{ }\PYG{l+m}{2894}\PYG{+w}{ }\PYG{l+m}{3101}
+\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{y\PYGZus{}pred\PYGZus{}check}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{predict}\PYG{p}{(}\PYG{n}{final\PYGZus{}model}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{X\PYGZus{}train}\PYG{p}{)}
+\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n+nf}{print}\PYG{p}{(}\PYG{n+nf}{table}\PYG{p}{(}\PYG{n}{y\PYGZus{}pred\PYGZus{}check}\PYG{p}{))}
+\PYG{+w}{ }\PYG{n}{y\PYGZus{}pred\PYGZus{}check}
+\PYG{+w}{    }\PYG{l+m}{0}\PYG{+w}{    }\PYG{l+m}{1}
+\PYG{+w}{    }\PYG{l+m}{0}\PYG{+w}{ }\PYG{l+m}{5995}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} 因此尝试更大的取值 \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{+w}{ }\PYG{n}{C\PYGZus{}grid}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{10}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{100}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1000}\PYG{p}{)}
+\PYG{+w}{ }\PYG{n}{gamma\PYGZus{}grid}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0.1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{10}\PYG{p}{)}
+\PYG{+w}{    }\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{+w}{ }\PYG{n+nf}{C }\PYG{p}{(}\PYG{n}{Cost}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{   }\PYG{n}{gamma}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{10}
+\PYG{+w}{   }平均\PYG{+w}{ }\PYG{n}{Accuracy}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.4178}\PYG{+w}{ }±\PYG{+w}{ }\PYG{l+m}{0.234}
+\PYG{+w}{   }平均\PYG{+w}{ }\PYG{n}{F1}\PYG{o}{\PYGZhy{}}\PYG{n}{Score}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.5488}\PYG{+w}{ }±\PYG{+w}{ }\PYG{l+m}{0.3071}
+\PYG{+w}{   }平均\PYG{+w}{ }\PYG{n}{Precision}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.4178}
+\PYG{+w}{   }平均\PYG{+w}{ }\PYG{n}{Recall}\PYG{o}{:}\PYG{+w}{ }\PYG{l+m}{0.8}
+\end{MintedVerbatim}

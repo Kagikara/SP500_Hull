@@ -1,0 +1,165 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 模块 2: 模型训练器}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{foreach}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{doParallel}\PYG{p}{)}
+
+\PYG{n}{train\PYGZus{}rf\PYGZus{}model}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{config}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Model\PYGZhy{}RF] 启动随机森林训练...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{X\PYGZus{}train\PYGZus{}mat}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.matrix}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{X\PYGZus{}train}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{y\PYGZus{}train\PYGZus{}vec}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{y\PYGZus{}train}
+\PYG{+w}{  }\PYG{n}{X\PYGZus{}test\PYGZus{}mat}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.matrix}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{X\PYGZus{}test}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{num\PYGZus{}cores}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{parallel}\PYG{o}{::}\PYG{n+nf}{detectCores}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{num\PYGZus{}cores}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{num\PYGZus{}cores}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{  }\PYG{n}{cl}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{makeCluster}\PYG{p}{(}\PYG{n}{num\PYGZus{}cores}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n+nf}{registerDoParallel}\PYG{p}{(}\PYG{n}{cl}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{rf\PYGZus{}p}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{rf\PYGZus{}params}
+\PYG{+w}{  }\PYG{n}{n\PYGZus{}features}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{ncol}\PYG{p}{(}\PYG{n}{X\PYGZus{}train\PYGZus{}mat}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{mtry\PYGZus{}val}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n}{rf\PYGZus{}p}\PYG{o}{\PYGZdl{}}\PYG{n}{mtry}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}sqrt\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{n+nf}{floor}\PYG{p}{(}\PYG{n+nf}{sqrt}\PYG{p}{(}\PYG{n}{n\PYGZus{}features}\PYG{p}{))}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{rf\PYGZus{}p}\PYG{o}{\PYGZdl{}}\PYG{n}{mtry}
+
+\PYG{+w}{  }\PYG{n}{custom\PYGZus{}funcs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}algo\PYGZus{}rf\PYGZus{}train\PYGZus{}custom\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}algo\PYGZus{}cart\PYGZus{}build\PYGZus{}tree\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{l+s}{\PYGZdq{}algo\PYGZus{}cart\PYGZus{}find\PYGZus{}split\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}algo\PYGZus{}cart\PYGZus{}gini\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{                    }\PYG{l+s}{\PYGZdq{}algo\PYGZus{}cart\PYGZus{}predict\PYGZus{}batch\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}algo\PYGZus{}cart\PYGZus{}predict\PYGZus{}sample\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{run\PYGZus{}parallel\PYGZus{}rf}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n\PYGZus{}tree\PYGZus{}total}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{    }\PYG{n}{base\PYGZus{}count}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{floor}\PYG{p}{(}\PYG{n}{n\PYGZus{}tree\PYGZus{}total}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{num\PYGZus{}cores}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{remainder}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{n\PYGZus{}tree\PYGZus{}total}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZpc{}}\PYG{+w}{ }\PYG{n}{num\PYGZus{}cores}
+
+\PYG{+w}{    }\PYG{n}{tree\PYGZus{}counts}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{n}{base\PYGZus{}count}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{num\PYGZus{}cores}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{remainder}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{tree\PYGZus{}counts}\PYG{p}{[}\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{remainder}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{tree\PYGZus{}counts}\PYG{p}{[}\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{remainder}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{    }\PYG{n}{forest\PYGZus{}chunk}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{foreach}\PYG{p}{(}
+\PYG{+w}{      }\PYG{n}{n\PYGZus{}tree\PYGZus{}local}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{tree\PYGZus{}counts}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{num\PYGZus{}cores}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{.combine}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{,}
+\PYG{+w}{      }\PYG{n}{.export}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{n}{custom\PYGZus{}funcs}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}rf\PYGZus{}p\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}mtry\PYGZus{}val\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZpc{}dopar\PYGZpc{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{      }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n}{n\PYGZus{}tree\PYGZus{}local}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{k+kr}{return}\PYG{p}{(}\PYG{k+kc}{NULL}\PYG{p}{)}
+
+\PYG{+w}{      }\PYG{n+nf}{set.seed}\PYG{p}{(}\PYG{l+m}{42}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}
+
+\PYG{+w}{      }\PYG{n+nf}{algo\PYGZus{}rf\PYGZus{}train\PYGZus{}custom}\PYG{p}{(}
+\PYG{+w}{        }\PYG{n}{X}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{X}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{y}\PYG{p}{,}
+\PYG{+w}{        }\PYG{n}{ntree}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{n\PYGZus{}tree\PYGZus{}local}\PYG{p}{,}
+\PYG{+w}{        }\PYG{n}{mtry}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{mtry\PYGZus{}val}\PYG{p}{,}
+\PYG{+w}{        }\PYG{n}{max\PYGZus{}depth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{rf\PYGZus{}p}\PYG{o}{\PYGZdl{}}\PYG{n}{max\PYGZus{}depth}\PYG{p}{,}
+\PYG{+w}{        }\PYG{n}{min\PYGZus{}node\PYGZus{}size}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{rf\PYGZus{}p}\PYG{o}{\PYGZdl{}}\PYG{n}{nodesize}
+\PYG{+w}{      }\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n}{forest\PYGZus{}chunk}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 3. 内部 CV 获取无偏 Logits}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Model\PYGZhy{}RF] 执行 3\PYGZhy{}Fold CV 以校准概率\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{k\PYGZus{}folds}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{3}
+\PYG{+w}{  }\PYG{n}{folds}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{cut}\PYG{p}{(}\PYG{n+nf}{seq}\PYG{p}{(}\PYG{l+m}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{X\PYGZus{}train\PYGZus{}mat}\PYG{p}{)),}\PYG{+w}{ }\PYG{n}{breaks}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{k\PYGZus{}folds}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{labels}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{cv\PYGZus{}logits}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{numeric}\PYG{p}{(}\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{X\PYGZus{}train\PYGZus{}mat}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{cv\PYGZus{}ntree\PYGZus{}total}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{max}\PYG{p}{(}\PYG{l+m}{50}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{floor}\PYG{p}{(}\PYG{n}{rf\PYGZus{}p}\PYG{o}{\PYGZdl{}}\PYG{n}{ntree}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m}{5}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{k+kr}{for}\PYG{p}{(}\PYG{n}{k}\PYG{+w}{ }\PYG{k+kr}{in}\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{k\PYGZus{}folds}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{idx\PYGZus{}val}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{which}\PYG{p}{(}\PYG{n}{folds}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{k}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{idx\PYGZus{}tr}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{which}\PYG{p}{(}\PYG{n}{folds}\PYG{+w}{ }\PYG{o}{!=}\PYG{+w}{ }\PYG{n}{k}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{n}{sub\PYGZus{}forest}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{run\PYGZus{}parallel\PYGZus{}rf}\PYG{p}{(}\PYG{n}{X\PYGZus{}train\PYGZus{}mat}\PYG{p}{[}\PYG{n}{idx\PYGZus{}tr}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{],}\PYG{+w}{ }\PYG{n}{y\PYGZus{}train\PYGZus{}vec}\PYG{p}{[}\PYG{n}{idx\PYGZus{}tr}\PYG{p}{],}\PYG{+w}{ }\PYG{n}{cv\PYGZus{}ntree\PYGZus{}total}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{n}{n\PYGZus{}trees\PYGZus{}sub}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{sub\PYGZus{}forest}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n}{n\PYGZus{}trees\PYGZus{}sub}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{preds\PYGZus{}mat}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{matrix}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{nrow}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{idx\PYGZus{}val}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{ncol}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{n\PYGZus{}trees\PYGZus{}sub}\PYG{p}{)}
+\PYG{+w}{      }\PYG{n}{X\PYGZus{}val\PYGZus{}sub}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{X\PYGZus{}train\PYGZus{}mat}\PYG{p}{[}\PYG{n}{idx\PYGZus{}val}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{,}\PYG{+w}{ }\PYG{n}{drop}\PYG{o}{=}\PYG{k+kc}{FALSE}\PYG{p}{]}
+
+\PYG{+w}{      }\PYG{k+kr}{for}\PYG{p}{(}\PYG{n}{t}\PYG{+w}{ }\PYG{k+kr}{in}\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{n\PYGZus{}trees\PYGZus{}sub}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{preds\PYGZus{}mat}\PYG{p}{[,}\PYG{+w}{ }\PYG{n}{t}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{algo\PYGZus{}cart\PYGZus{}predict\PYGZus{}batch}\PYG{p}{(}\PYG{n}{sub\PYGZus{}forest}\PYG{p}{[[}\PYG{n}{t}\PYG{p}{]],}\PYG{+w}{ }\PYG{n}{X\PYGZus{}val\PYGZus{}sub}\PYG{p}{)}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{      }\PYG{n}{val\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rowMeans}\PYG{p}{(}\PYG{n}{preds\PYGZus{}mat}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{val\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rep}\PYG{p}{(}\PYG{l+m}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{idx\PYGZus{}val}\PYG{p}{))}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{    }\PYG{n}{eps}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1e\PYGZhy{}6}
+\PYG{+w}{    }\PYG{n}{val\PYGZus{}probs\PYGZus{}clip}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{pmax}\PYG{p}{(}\PYG{n}{eps}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{pmin}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{eps}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{val\PYGZus{}probs}\PYG{p}{))}
+\PYG{+w}{    }\PYG{n}{cv\PYGZus{}logits}\PYG{p}{[}\PYG{n}{idx\PYGZus{}val}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{log}\PYG{p}{(}\PYG{n}{val\PYGZus{}probs\PYGZus{}clip}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{val\PYGZus{}probs\PYGZus{}clip}\PYG{p}{))}
+
+\PYG{+w}{    }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} Fold \PYGZpc{}d/\PYGZpc{}d 完成.\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{k\PYGZus{}folds}\PYG{p}{))}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{platt\PYGZus{}params}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{algo\PYGZus{}platt\PYGZus{}fit}\PYG{p}{(}\PYG{n}{cv\PYGZus{}logits}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n+nf}{as.character}\PYG{p}{(}\PYG{n}{y\PYGZus{}train\PYGZus{}vec}\PYG{p}{)))}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 校准参数: A=\PYGZpc{}.4f, B=\PYGZpc{}.4f\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{platt\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{A}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{platt\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{B}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}cv\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{algo\PYGZus{}platt\PYGZus{}predict}\PYG{p}{(}\PYG{n}{cv\PYGZus{}logits}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{platt\PYGZus{}params}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 4. 训练全量模型}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Model\PYGZhy{}RF] 训练全量模型 (Trees=\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rf\PYGZus{}p}\PYG{o}{\PYGZdl{}}\PYG{n}{ntree}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{})...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{t\PYGZus{}start}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{Sys.time}\PYG{p}{()}
+
+\PYG{+w}{  }\PYG{n}{full\PYGZus{}forest}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{run\PYGZus{}parallel\PYGZus{}rf}\PYG{p}{(}\PYG{n}{X\PYGZus{}train\PYGZus{}mat}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{y\PYGZus{}train\PYGZus{}vec}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rf\PYGZus{}p}\PYG{o}{\PYGZdl{}}\PYG{n}{ntree}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{t\PYGZus{}end}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{Sys.time}\PYG{p}{()}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} 训练耗时:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{round}\PYG{p}{(}\PYG{n+nf}{difftime}\PYG{p}{(}\PYG{n}{t\PYGZus{}end}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{t\PYGZus{}start}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{units}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}secs\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}秒\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 停止集群}
+\PYG{+w}{  }\PYG{n+nf}{stopCluster}\PYG{p}{(}\PYG{n}{cl}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 5. 预测测试集}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Model\PYGZhy{}RF] 生成测试集预测...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{n\PYGZus{}test}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{X\PYGZus{}test\PYGZus{}mat}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{n\PYGZus{}trees\PYGZus{}full}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{full\PYGZus{}forest}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}preds\PYGZus{}mat}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{matrix}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{nrow}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{n\PYGZus{}test}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ncol}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{n\PYGZus{}trees\PYGZus{}full}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{i}\PYG{+w}{ }\PYG{k+kr}{in}\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{n\PYGZus{}trees\PYGZus{}full}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{test\PYGZus{}preds\PYGZus{}mat}\PYG{p}{[,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{algo\PYGZus{}cart\PYGZus{}predict\PYGZus{}batch}\PYG{p}{(}\PYG{n}{full\PYGZus{}forest}\PYG{p}{[[}\PYG{n}{i}\PYG{p}{]],}\PYG{+w}{ }\PYG{n}{X\PYGZus{}test\PYGZus{}mat}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}probs\PYGZus{}raw}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rowMeans}\PYG{p}{(}\PYG{n}{test\PYGZus{}preds\PYGZus{}mat}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{eps}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1e\PYGZhy{}6}
+\PYG{+w}{  }\PYG{n}{probs\PYGZus{}clipped}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{pmax}\PYG{p}{(}\PYG{n}{eps}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{pmin}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{eps}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{test\PYGZus{}probs\PYGZus{}raw}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}scores\PYGZus{}logit}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{log}\PYG{p}{(}\PYG{n}{probs\PYGZus{}clipped}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{probs\PYGZus{}clipped}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Model\PYGZhy{}RF] 统计特征重要性...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{feat\PYGZus{}counts}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{table}\PYG{p}{(}\PYG{n+nf}{unlist}\PYG{p}{(}\PYG{n+nf}{lapply}\PYG{p}{(}\PYG{n}{full\PYGZus{}forest}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{tree}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{extract\PYGZus{}feats}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{node}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{node}\PYG{o}{\PYGZdl{}}\PYG{n}{type}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}leaf\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{k+kr}{return}\PYG{p}{(}\PYG{k+kc}{NULL}\PYG{p}{)}
+\PYG{+w}{      }\PYG{n+nf}{c}\PYG{p}{(}\PYG{n}{node}\PYG{o}{\PYGZdl{}}\PYG{n}{feature\PYGZus{}idx}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{extract\PYGZus{}feats}\PYG{p}{(}\PYG{n}{node}\PYG{o}{\PYGZdl{}}\PYG{n}{left}\PYG{p}{),}\PYG{+w}{ }\PYG{n+nf}{extract\PYGZus{}feats}\PYG{p}{(}\PYG{n}{node}\PYG{o}{\PYGZdl{}}\PYG{n}{right}\PYG{p}{))}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{n+nf}{extract\PYGZus{}feats}\PYG{p}{(}\PYG{n}{tree}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{})))}
+
+\PYG{+w}{  }\PYG{n}{imp\PYGZus{}df}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{data.frame}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{Feature\PYGZus{}Idx}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{feat\PYGZus{}counts}\PYG{p}{)),}
+\PYG{+w}{    }\PYG{n}{Frequency}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n}{feat\PYGZus{}counts}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{imp\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{Feature}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{colnames}\PYG{p}{(}\PYG{n}{X\PYGZus{}train\PYGZus{}mat}\PYG{p}{)[}\PYG{n}{imp\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{Feature\PYGZus{}Idx}\PYG{p}{]}
+\PYG{+w}{  }\PYG{n}{imp\PYGZus{}df}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{imp\PYGZus{}df}\PYG{+w}{ }\PYG{o}{\PYGZpc{}\PYGZgt{}\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{arrange}\PYG{p}{(}\PYG{n+nf}{desc}\PYG{p}{(}\PYG{n}{Frequency}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n+nf}{write.csv}\PYG{p}{(}\PYG{n}{imp\PYGZus{}df}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{file.path}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}rf\PYGZus{}handmade\PYGZus{}importance.csv\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{row.names}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n+nf}{saveRDS}\PYG{p}{(}\PYG{n}{full\PYGZus{}forest}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{file.path}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}rf\PYGZus{}handmade\PYGZus{}model.rds\PYGZdq{}}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{model}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{full\PYGZus{}forest}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{test\PYGZus{}scores}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{test\PYGZus{}scores\PYGZus{}logit}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{platt\PYGZus{}params}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{platt\PYGZus{}params}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{train\PYGZus{}cv\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{train\PYGZus{}cv\PYGZus{}probs}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{feature\PYGZus{}importance}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{imp\PYGZus{}df}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{model\PYGZus{}type}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}random\PYGZus{}forest\PYGZus{}handmade\PYGZdq{}}
+\PYG{+w}{  }\PYG{p}{))}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

@@ -1,0 +1,258 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 模块 3: 策略引擎}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{zoo}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{ggplot2}\PYG{p}{)}
+
+\PYG{n}{calc\PYGZus{}rolling\PYGZus{}rank}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{width}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{rng\PYGZus{}rank}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rollapply}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{width}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{z}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{current}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{z}\PYG{p}{[}\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{z}\PYG{p}{)]}
+\PYG{+w}{    }\PYG{n+nf}{mean}\PYG{p}{(}\PYG{n}{z}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{current}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{TRUE}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{fill}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{NA}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{align}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}right\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nf}{any}\PYG{p}{(}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{rng\PYGZus{}rank}\PYG{p}{)))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{valid\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{which}\PYG{p}{(}\PYG{o}{!}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{rng\PYGZus{}rank}\PYG{p}{))[}\PYG{l+m}{1}\PYG{p}{]}
+\PYG{+w}{    }\PYG{k+kr}{if}\PYG{p}{(}\PYG{o}{!}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{valid\PYGZus{}idx}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{valid\PYGZus{}idx}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{rng\PYGZus{}rank}\PYG{p}{[}\PYG{l+m}{1}\PYG{o}{:}\PYG{p}{(}\PYG{n}{valid\PYGZus{}idx}\PYG{l+m}{\PYGZhy{}1}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0.5}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n}{rng\PYGZus{}rank}\PYG{p}{)}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{n}{run\PYGZus{}strategy\PYGZus{}backtest\PYGZus{}rf}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{model\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{config}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Strategy\PYGZhy{}RF] 启动自适应狙击回测\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{sniper}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{sniper\PYGZus{}mode}
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}target\PYGZus{}vol}\PYG{+w}{   }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{target\PYGZus{}vol}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{0.15}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{target\PYGZus{}vol}
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}max\PYGZus{}leverage}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{max\PYGZus{}leverage}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{2.0}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{max\PYGZus{}leverage}
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}trans\PYGZus{}cost}\PYG{+w}{   }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{transaction\PYGZus{}cost}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{0.001}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{transaction\PYGZus{}cost}
+\PYG{+w}{  }\PYG{n}{p\PYGZus{}rank\PYGZus{}window}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}window}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{250}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}window}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{sniper}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{o}{!}\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{active}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}错误: Config 中未找到 sniper\PYGZus{}mode 参数，请检查 main\PYGZus{}rf.R 配置\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} [Sniper Config] Lookback=\PYGZpc{}d, Open\PYGZus{}Q=\PYGZpc{}.2f, Hard\PYGZus{}Floor=\PYGZpc{}.2f\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{              }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{lookback\PYGZus{}window}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{open\PYGZus{}quantile}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{hard\PYGZus{}floor\PYGZus{}open}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{raw\PYGZus{}test\PYGZus{}set}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}scores}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n}{model\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{test\PYGZus{}scores}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{test\PYGZus{}scores}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}错误: 无预测得分\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{model\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{platt\PYGZus{}params}\PYG{p}{))}\PYG{+w}{ }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}错误: 缺少 Platt 参数\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{platt\PYGZus{}params}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{model\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{platt\PYGZus{}params}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} [Calibration] 应用参数: A=\PYGZpc{}.4f, B=\PYGZpc{}.4f\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{platt\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{A}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{platt\PYGZus{}params}\PYG{o}{\PYGZdl{}}\PYG{n}{B}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{pred\PYGZus{}prob}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{algo\PYGZus{}platt\PYGZus{}predict}\PYG{p}{(}\PYG{n}{test\PYGZus{}scores}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{platt\PYGZus{}params}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Strategy\PYGZhy{}RF] 计算动态阈值\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{model\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{train\PYGZus{}cv\PYGZus{}probs}\PYG{p}{))}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n+nf}{stop}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}错误: model\PYGZus{}bundle 中缺少 train\PYGZus{}cv\PYGZus{}probs。请确保已更新 02\PYGZus{}model\PYGZus{}trainer\PYGZus{}rf\PYGZus{}handmade.R\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{model\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{train\PYGZus{}cv\PYGZus{}probs}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}probs}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{pred\PYGZus{}prob}
+
+\PYG{+w}{  }\PYG{n}{full\PYGZus{}history\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{n}{train\PYGZus{}probs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{test\PYGZus{}probs}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{n\PYGZus{}train}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{train\PYGZus{}probs}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{n\PYGZus{}test}\PYG{+w}{  }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{test\PYGZus{}probs}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{rolling\PYGZus{}threshold\PYGZus{}raw}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rollapply}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{full\PYGZus{}history\PYGZus{}probs}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{width}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{lookback\PYGZus{}window}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{FUN}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}\PYG{+w}{ }\PYG{n+nf}{quantile}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{probs}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{open\PYGZus{}quantile}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{TRUE}\PYG{p}{),}
+\PYG{+w}{    }\PYG{n}{fill}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{NA}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{align}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}right\PYGZdq{}}
+\PYG{+w}{  }\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{rolling\PYGZus{}threshold\PYGZus{}lagged}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{dplyr}\PYG{o}{::}\PYG{n+nf}{lag}\PYG{p}{(}\PYG{n}{rolling\PYGZus{}threshold\PYGZus{}raw}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}dynamic\PYGZus{}thresholds}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{rolling\PYGZus{}threshold\PYGZus{}lagged}\PYG{p}{[(}\PYG{n}{n\PYGZus{}train}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n\PYGZus{}train}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{n\PYGZus{}test}\PYG{p}{)]}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}dynamic\PYGZus{}thresholds}\PYG{p}{[}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{test\PYGZus{}dynamic\PYGZus{}thresholds}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{hard\PYGZus{}floor\PYGZus{}open}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{thresh\PYGZus{}open}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{pmax}\PYG{p}{(}\PYG{n}{test\PYGZus{}dynamic\PYGZus{}thresholds}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{hard\PYGZus{}floor\PYGZus{}open}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Strategy\PYGZhy{}RF] 执行信号状态机 (模式: 指数增强)...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{pos\PYGZus{}base}\PYG{+w}{    }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{pos\PYGZus{}base}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{0.8}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{pos\PYGZus{}base}
+\PYG{+w}{  }\PYG{n}{pos\PYGZus{}boost}\PYG{+w}{   }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{pos\PYGZus{}boost}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{1.3}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{pos\PYGZus{}boost}
+\PYG{+w}{  }\PYG{n}{pos\PYGZus{}bailout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{pos\PYGZus{}bailout}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{0.0}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{pos\PYGZus{}bailout}
+\PYG{+w}{  }\PYG{n}{bail\PYGZus{}thr}\PYG{+w}{    }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n+nf}{is.null}\PYG{p}{(}\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{bailout\PYGZus{}thresh}\PYG{p}{))}\PYG{+w}{ }\PYG{l+m}{0.45}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{bailout\PYGZus{}thresh}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} [仓位管理] Base=\PYGZpc{}.1f, Boost=\PYGZpc{}.1f, Bailout=\PYGZpc{}.1f (Thr\PYGZlt{}\PYGZpc{}.2f)\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{              }\PYG{n}{pos\PYGZus{}base}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{pos\PYGZus{}boost}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{pos\PYGZus{}bailout}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{bail\PYGZus{}thr}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{rf\PYGZus{}position\PYGZus{}signal}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{numeric}\PYG{p}{(}\PYG{n}{n\PYGZus{}test}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0}
+
+\PYG{+w}{  }\PYG{n}{vec\PYGZus{}probs}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{pred\PYGZus{}prob}
+\PYG{+w}{  }\PYG{n}{vec\PYGZus{}thresh\PYGZus{}open}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{thresh\PYGZus{}open}
+
+\PYG{+w}{  }\PYG{k+kr}{for}\PYG{p}{(}\PYG{n}{i}\PYG{+w}{ }\PYG{k+kr}{in}\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{:}\PYG{n}{n\PYGZus{}test}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{prob\PYGZus{}t}\PYG{+w}{   }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{vec\PYGZus{}probs}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}
+\PYG{+w}{    }\PYG{n}{dyn\PYGZus{}open}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{vec\PYGZus{}thresh\PYGZus{}open}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}
+
+\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} 状态转换逻辑}
+\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{+w}{    }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} [当前: 底仓] \PYGZhy{}\PYGZgt{} 检查是否变强或变弱}
+\PYG{+w}{      }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{prob\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{dyn\PYGZus{}open}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYG{c+c1}{\PYGZsh{} 触发狙击，加仓}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{prob\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{bail\PYGZus{}thr}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}1}\PYG{+w}{ }\PYG{c+c1}{\PYGZsh{} 信号极差，砍底仓}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} 检查是否该止盈(退回底仓)}
+\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} 如果概率掉回 0.50 以下，说明多头趋势不再，退守底仓}
+\PYG{+w}{      }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{prob\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{hard\PYGZus{}floor\PYGZus{}close}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{c+c1}{\PYGZsh{} 二次判断: 如果跌得很惨，直接去逃生；否则只是退回底仓}
+\PYG{+w}{        }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{prob\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{bail\PYGZus{}thr}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{          }\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}1}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{          }\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} 否则保持增强状态}
+
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} 检查是否安全了(回补底仓)}
+\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} 只要概率回到 0.50 以上，说明市场企稳，建立底仓}
+\PYG{+w}{      }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{prob\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{sniper}\PYG{o}{\PYGZdl{}}\PYG{n}{hard\PYGZus{}floor\PYGZus{}close}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{c+c1}{\PYGZsh{} 如果甚至超过了狙击线，直接进增强}
+\PYG{+w}{        }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{prob\PYGZus{}t}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{dyn\PYGZus{}open}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{          }\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{          }\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{      }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{    }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{rf\PYGZus{}position\PYGZus{}signal}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{pos\PYGZus{}boost}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{current\PYGZus{}state}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m}{\PYGZhy{}1}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{rf\PYGZus{}position\PYGZus{}signal}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{pos\PYGZus{}bailout}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n}{rf\PYGZus{}position\PYGZus{}signal}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{pos\PYGZus{}base}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{signal\PYGZus{}rf}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{rf\PYGZus{}position\PYGZus{}signal}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} 因子互作滤网 \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}[Strategy\PYGZhy{}RF] 计算 M\PYGZhy{}P 互作滤网...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{col\PYGZus{}m}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{special\PYGZus{}cols}\PYG{o}{\PYGZdl{}}\PYG{n}{momentum}
+\PYG{+w}{  }\PYG{n}{col\PYGZus{}p}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{data\PYGZus{}bundle}\PYG{o}{\PYGZdl{}}\PYG{n}{special\PYGZus{}cols}\PYG{o}{\PYGZdl{}}\PYG{n}{value}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}m}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{calc\PYGZus{}rolling\PYGZus{}rank}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{p}{[[}\PYG{n}{col\PYGZus{}m}\PYG{p}{]],}\PYG{+w}{ }\PYG{n}{p\PYGZus{}rank\PYGZus{}window}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}p}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{calc\PYGZus{}rolling\PYGZus{}rank}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{p}{[[}\PYG{n}{col\PYGZus{}p}\PYG{p}{]],}\PYG{+w}{ }\PYG{n}{p\PYGZus{}rank\PYGZus{}window}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{filter\PYGZus{}mp}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1.0}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 崩盘保护 (M \PYGZlt{} 20\PYGZpc{})}
+\PYG{+w}{  }\PYG{n}{mask\PYGZus{}crash}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}m}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m}{0.20}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{filter\PYGZus{}mp}\PYG{p}{[}\PYG{n}{mask\PYGZus{}crash}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0.0}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 震荡观察 (20\PYGZpc{} \PYGZlt{}= M \PYGZlt{} 70\PYGZpc{})}
+\PYG{+w}{  }\PYG{n}{mask\PYGZus{}chop}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}m}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{l+m}{0.20}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}m}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m}{0.70}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{filter\PYGZus{}mp}\PYG{p}{[}\PYG{n}{mask\PYGZus{}chop}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0.5}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 估值泡沫 (P \PYGZgt{} 90\PYGZpc{})}
+\PYG{+w}{  }\PYG{n}{mask\PYGZus{}bubble}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}p}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{l+m}{0.90}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{filter\PYGZus{}mp}\PYG{p}{[}\PYG{n}{mask\PYGZus{}bubble}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{o}{!}\PYG{n}{mask\PYGZus{}crash}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0.5}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} (M \PYGZgt{}= 66\PYGZpc{} \PYGZam{} P \PYGZlt{} 70\PYGZpc{}) \PYGZhy{}\PYGZgt{} 加杠杆}
+\PYG{+w}{  }\PYG{n}{mask\PYGZus{}boost}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}m}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{l+m}{0.66}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{rank\PYGZus{}p}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{l+m}{0.70}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{filter\PYGZus{}mp}\PYG{p}{[}\PYG{n}{mask\PYGZus{}boost}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{2.0}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} 风控与合成 \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{  }\PYG{n}{vol\PYGZus{}zoo}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{rollapply}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}\PYG{p}{,}
+\PYG{+w}{                       }\PYG{n}{width}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{20}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{FUN}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sd}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{fill}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{NA}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{align}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}right\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n+nf}{sqrt}\PYG{p}{(}\PYG{l+m}{252}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{current\PYGZus{}vol}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n}{vol\PYGZus{}zoo}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{current\PYGZus{}vol}\PYG{p}{[}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{current\PYGZus{}vol}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{|}\PYG{+w}{ }\PYG{n}{current\PYGZus{}vol}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{l+m}{0}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{p\PYGZus{}target\PYGZus{}vol}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{regime\PYGZus{}vol}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{p\PYGZus{}target\PYGZus{}vol}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{current\PYGZus{}vol}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} 合成最终仓位}
+\PYG{+w}{  }\PYG{n}{raw\PYGZus{}pos}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{signal\PYGZus{}rf}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{filter\PYGZus{}mp}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{regime\PYGZus{}vol}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{pmin}\PYG{p}{(}\PYG{n}{raw\PYGZus{}pos}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{p\PYGZus{}max\PYGZus{}leverage}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{p}{[}\PYG{n+nf}{is.na}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{0}
+
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} \PYGZhy{}\PYGZhy{}\PYGZhy{} 绩效统计 (含交易成本) \PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{+w}{  }\PYG{n}{pos\PYGZus{}change}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{diff}\PYG{p}{(}\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n}{turnover\PYGZus{}cost}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{abs}\PYG{p}{(}\PYG{n}{pos\PYGZus{}change}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{p\PYGZus{}trans\PYGZus{}cost}
+
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{gross\PYGZus{}return}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{position}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{strategy\PYGZus{}return}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{gross\PYGZus{}return}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{turnover\PYGZus{}cost}
+
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{n+nf}{sprintf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}  \PYGZhy{} [Cost] 交易成本损耗: \PYGZpc{}.2f\PYGZpc{}\PYGZpc{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{sum}\PYG{p}{(}\PYG{n}{turnover\PYGZus{}cost}\PYG{p}{)}\PYG{o}{*}\PYG{l+m}{100}\PYG{p}{))}
+
+\PYG{+w}{  }\PYG{n}{calc\PYGZus{}metrics}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{function}\PYG{p}{(}\PYG{n}{ret}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{ret}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{as.numeric}\PYG{p}{(}\PYG{n}{ret}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{total}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{prod}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{ret}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{o}{=}\PYG{k+kc}{TRUE}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{    }\PYG{n}{ann}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{total}\PYG{p}{)}\PYG{o}{\PYGZca{}}\PYG{p}{(}\PYG{l+m}{252}\PYG{o}{/}\PYG{n+nf}{length}\PYG{p}{(}\PYG{n}{ret}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{+w}{    }\PYG{n}{vol}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{sd}\PYG{p}{(}\PYG{n}{ret}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{o}{=}\PYG{k+kc}{TRUE}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n+nf}{sqrt}\PYG{p}{(}\PYG{l+m}{252}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{sharpe}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{k+kr}{if}\PYG{p}{(}\PYG{n}{vol}\PYG{o}{==}\PYG{l+m}{0}\PYG{p}{)}\PYG{+w}{ }\PYG{l+m}{0}\PYG{+w}{ }\PYG{k+kr}{else}\PYG{+w}{ }\PYG{n}{ann}\PYG{o}{/}\PYG{n}{vol}
+\PYG{+w}{    }\PYG{n}{dd}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{min}\PYG{p}{((}\PYG{n+nf}{cumprod}\PYG{p}{(}\PYG{l+m}{1}\PYG{o}{+}\PYG{n}{ret}\PYG{p}{)}\PYG{o}{/}\PYG{n+nf}{cummax}\PYG{p}{(}\PYG{n+nf}{cumprod}\PYG{p}{(}\PYG{l+m}{1}\PYG{o}{+}\PYG{n}{ret}\PYG{p}{)))}\PYG{l+m}{\PYGZhy{}1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{na.rm}\PYG{o}{=}\PYG{k+kc}{TRUE}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n+nf}{c}\PYG{p}{(}\PYG{n}{Ann\PYGZus{}Return}\PYG{o}{=}\PYG{n}{ann}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Sharpe}\PYG{o}{=}\PYG{n}{sharpe}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Max\PYGZus{}DD}\PYG{o}{=}\PYG{n}{dd}\PYG{p}{))}
+\PYG{+w}{  }\PYG{p}{\PYGZcb{}}
+
+\PYG{+w}{  }\PYG{n}{res\PYGZus{}strat}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{calc\PYGZus{}metrics}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{strategy\PYGZus{}return}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n}{res\PYGZus{}mkt}\PYG{+w}{   }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{calc\PYGZus{}metrics}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{metrics\PYGZus{}df}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{data.frame}\PYG{p}{(}\PYG{n}{Metric}\PYG{o}{=}\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{res\PYGZus{}strat}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{Market}\PYG{o}{=}\PYG{n+nf}{round}\PYG{p}{(}\PYG{n}{res\PYGZus{}mkt}\PYG{p}{,}\PYG{l+m}{4}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{Strategy}\PYG{o}{=}\PYG{n+nf}{round}\PYG{p}{(}\PYG{n}{res\PYGZus{}strat}\PYG{p}{,}\PYG{l+m}{4}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{} RF Sniper 自适应策略绩效 \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n+nf}{print}\PYG{p}{(}\PYG{n}{metrics\PYGZus{}df}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n+nf}{write.csv}\PYG{p}{(}\PYG{n}{metrics\PYGZus{}df}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{file.path}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}rf\PYGZus{}sniper\PYGZus{}metrics.csv\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{row.names}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{plot\PYGZus{}df}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{data.frame}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{Time}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{:}\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{p}{),}
+\PYG{+w}{    }\PYG{n}{Market}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{cumprod}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{market\PYGZus{}forward\PYGZus{}excess\PYGZus{}returns}\PYG{p}{),}
+\PYG{+w}{    }\PYG{n}{Strategy}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{cumprod}\PYG{p}{(}\PYG{l+m}{1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{strategy\PYGZus{}return}\PYG{p}{),}
+\PYG{+w}{    }\PYG{n}{Prob}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{pred\PYGZus{}prob}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{Threshold}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{thresh\PYGZus{}open}
+\PYG{+w}{  }\PYG{p}{)}
+\PYG{+w}{  }\PYG{k+kr}{if}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}date\PYGZus{}id\PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZpc{}in\PYGZpc{}}\PYG{+w}{ }\PYG{n+nf}{names}\PYG{p}{(}\PYG{n}{test\PYGZus{}set}\PYG{p}{))}\PYG{+w}{ }\PYG{n}{plot\PYGZus{}df}\PYG{o}{\PYGZdl{}}\PYG{n}{Time}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{o}{\PYGZdl{}}\PYG{n}{date\PYGZus{}id}
+
+\PYG{+w}{  }\PYG{n}{p1}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{ggplot}\PYG{p}{(}\PYG{n}{plot\PYGZus{}df}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{x}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Time}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{geom\PYGZus{}line}\PYG{p}{(}\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Market}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Market\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{alpha}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.6}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{geom\PYGZus{}line}\PYG{p}{(}\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Strategy}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Sniper (Net)\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{scale\PYGZus{}color\PYGZus{}manual}\PYG{p}{(}\PYG{n}{values}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Market\PYGZdq{}}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}grey\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Sniper (Net)\PYGZdq{}}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}darkgreen\PYGZdq{}}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{labs}\PYG{p}{(}\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}RF Sniper Adaptive Strategy\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{         }\PYG{n}{subtitle}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{paste}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Sharpe:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{round}\PYG{p}{(}\PYG{n}{res\PYGZus{}strat}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}Sharpe\PYGZsq{}}\PYG{p}{],}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{)),}
+\PYG{+w}{         }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Net Value\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{theme\PYGZus{}minimal}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{theme}\PYG{p}{(}\PYG{n}{legend.position}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}top\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{tail\PYGZus{}n}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{min}\PYG{p}{(}\PYG{l+m}{500}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{nrow}\PYG{p}{(}\PYG{n}{plot\PYGZus{}df}\PYG{p}{))}
+\PYG{+w}{  }\PYG{n}{plot\PYGZus{}df\PYGZus{}tail}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{tail}\PYG{p}{(}\PYG{n}{plot\PYGZus{}df}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{tail\PYGZus{}n}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n}{p2}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{ggplot}\PYG{p}{(}\PYG{n}{plot\PYGZus{}df\PYGZus{}tail}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{x}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Time}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{geom\PYGZus{}line}\PYG{p}{(}\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Prob}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}RF Prob\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{alpha}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.5}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{geom\PYGZus{}line}\PYG{p}{(}\PYG{n+nf}{aes}\PYG{p}{(}\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{Threshold}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Dynamic Thresh\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.8}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{linetype}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}dashed\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{scale\PYGZus{}color\PYGZus{}manual}\PYG{p}{(}\PYG{n}{values}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{c}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}RF Prob\PYGZdq{}}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}blue\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Dynamic Thresh\PYGZdq{}}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}red\PYGZdq{}}\PYG{p}{))}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{labs}\PYG{p}{(}\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Sniper Threshold Monitor (Last 500 days)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{         }\PYG{n}{y}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Probability / Threshold\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{theme\PYGZus{}minimal}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{+}
+\PYG{+w}{    }\PYG{n+nf}{theme}\PYG{p}{(}\PYG{n}{legend.position}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}top\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{n+nf}{ggsave}\PYG{p}{(}\PYG{n+nf}{file.path}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}rf\PYGZus{}sniper\PYGZus{}equity.png\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{p1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{width}\PYG{o}{=}\PYG{l+m}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{height}\PYG{o}{=}\PYG{l+m}{5}\PYG{p}{)}
+\PYG{+w}{  }\PYG{n+nf}{ggsave}\PYG{p}{(}\PYG{n+nf}{file.path}\PYG{p}{(}\PYG{n}{config}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}rf\PYGZus{}sniper\PYGZus{}thresholds.png\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{p2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{width}\PYG{o}{=}\PYG{l+m}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{height}\PYG{o}{=}\PYG{l+m}{4}\PYG{p}{)}
+
+\PYG{+w}{  }\PYG{k+kr}{return}\PYG{p}{(}\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{results\PYGZus{}df}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{test\PYGZus{}set}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{metrics}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{metrics\PYGZus{}df}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{plot}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p1}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{platt\PYGZus{}params}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{platt\PYGZus{}params}
+\PYG{+w}{  }\PYG{p}{))}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

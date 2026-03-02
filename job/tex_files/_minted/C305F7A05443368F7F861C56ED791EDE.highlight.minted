@@ -1,0 +1,73 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 主程序: XGBoost主控}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{n+nf}{rm}\PYG{p}{(}\PYG{n}{list}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{ls}\PYG{p}{())}
+\PYG{n+nf}{gc}\PYG{p}{()}
+\PYG{n+nf}{setwd}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}C:/Users/kagirasu/works\PYGZus{}H/ml\PYGZus{}HULL/job/code/code\PYGZus{}section3\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{dplyr}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{zoo}\PYG{p}{)}
+\PYG{n+nf}{library}\PYG{p}{(}\PYG{n}{ggplot2}\PYG{p}{)}
+
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}proj\PYGZus{}svm/svm\PYGZus{}modulized\PYGZus{}handmade/algorithm\PYGZus{}handmade.r\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}XGB/01\PYGZus{}data\PYGZus{}processor\PYGZus{}xgb.R\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}XGB/02\PYGZus{}model\PYGZus{}trainer\PYGZus{}xgb copy.R\PYGZdq{}}\PYG{p}{)}
+\PYG{n+nf}{source}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}XGB/03\PYGZus{}strategy\PYGZus{}engine\PYGZus{}xgb.R\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n}{CONFIG}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{  }\PYG{n}{input\PYGZus{}file}\PYG{+w}{      }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}proj\PYGZus{}svm/data/train.csv\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{output\PYGZus{}dir}\PYG{+w}{      }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}output\PYGZus{}xgb\PYGZus{}fixed\PYGZdq{}}\PYG{p}{,}
+
+\PYG{+w}{  }\PYG{n}{use\PYGZus{}lasso}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kc}{FALSE}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{lasso\PYGZus{}params}\PYG{+w}{    }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{n\PYGZus{}lambdas}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{20}\PYG{p}{,}\PYG{+w}{         }\PYG{c+c1}{\PYGZsh{} 扫描多少个 lambda}
+\PYG{+w}{    }\PYG{n}{k\PYGZus{}folds}\PYG{+w}{   }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{5}\PYG{+w}{           }\PYG{c+c1}{\PYGZsh{} 交叉验证折数}
+\PYG{+w}{  }\PYG{p}{),}
+\PYG{+w}{  }\PYG{n}{missing\PYGZus{}thresh}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.20}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{train\PYGZus{}end\PYGZus{}id}\PYG{+w}{    }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{7000}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}start\PYGZus{}id}\PYG{+w}{   }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{7001}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{test\PYGZus{}end\PYGZus{}id}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{7984}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{na\PYGZus{}handling}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}none\PYGZdq{}}\PYG{p}{,}
+
+\PYG{+w}{  }\PYG{n}{xgb\PYGZus{}params}\PYG{+w}{      }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf}{list}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{eta}\PYG{+w}{             }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.01}\PYG{p}{,}\PYG{+w}{   }\PYG{c+c1}{\PYGZsh{} 学习率}
+\PYG{+w}{    }\PYG{n}{max\PYGZus{}depth}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{3}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{subsample}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.7}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{colsample\PYGZus{}bytree}\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.7}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{min\PYGZus{}child\PYGZus{}weight}\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{10}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{objective}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}binary:logistic\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{eval\PYGZus{}metric}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}auc\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{nrounds}\PYG{+w}{         }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1000}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{early\PYGZus{}stopping}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{50}
+\PYG{+w}{  }\PYG{p}{),}
+
+\PYG{+w}{  }\PYG{n}{target\PYGZus{}vol}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.2}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{max\PYGZus{}leverage}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{2.0}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{trend\PYGZus{}window}\PYG{+w}{     }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{60}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{prob\PYGZus{}roll\PYGZus{}window}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{60}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{prob\PYGZus{}slope}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{10}\PYG{p}{,}
+\PYG{+w}{  }\PYG{n}{transaction\PYGZus{}cost}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{0.001}
+\PYG{p}{)}
+
+\PYG{k+kr}{if}\PYG{p}{(}\PYG{o}{!}\PYG{n+nf}{dir.exists}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{))}\PYG{+w}{ }\PYG{n+nf}{dir.create}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{output\PYGZus{}dir}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{c+c1}{\PYGZsh{} 执行流水线}
+\PYG{c+c1}{\PYGZsh{} ============================================================}
+\PYG{n}{start\PYGZus{}time}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{Sys.time}\PYG{p}{()}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZgt{}\PYGZgt{}\PYGZgt{} [XGB Project] 启动...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZgt{}\PYGZgt{}\PYGZgt{} 阶段 I: 数据预处理\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{data\PYGZus{}bundle}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{process\PYGZus{}data\PYGZus{}xgb}\PYG{p}{(}\PYG{n}{CONFIG}\PYG{o}{\PYGZdl{}}\PYG{n}{input\PYGZus{}file}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{p}{)}
+
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZgt{}\PYGZgt{}\PYGZgt{} 阶段 II: XGBoost 训练\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{model\PYGZus{}bundle}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{train\PYGZus{}xgb\PYGZus{}model}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{p}{)}
+
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZgt{}\PYGZgt{}\PYGZgt{} 阶段 III: 策略回测...\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{backtest\PYGZus{}results}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{run\PYGZus{}strategy\PYGZus{}backtest\PYGZus{}xgb}\PYG{p}{(}\PYG{n}{data\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{model\PYGZus{}bundle}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CONFIG}\PYG{p}{)}
+
+\PYG{n}{end\PYGZus{}time}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZhy{}}\PYG{+w}{ }\PYG{n+nf}{Sys.time}\PYG{p}{()}
+\PYG{n+nf}{cat}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}\PYGZbs{}n\PYGZgt{}\PYGZgt{}\PYGZgt{} [XGB Project] 完成! 耗时:\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nf}{round}\PYG{p}{(}\PYG{n+nf}{difftime}\PYG{p}{(}\PYG{n}{end\PYGZus{}time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{start\PYGZus{}time}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{units}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}mins\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{l+m}{2}\PYG{p}{),}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}分\PYGZbs{}n\PYGZdq{}}\PYG{p}{)}
+
+\end{MintedVerbatim}
